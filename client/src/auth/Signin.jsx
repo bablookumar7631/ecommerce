@@ -12,7 +12,7 @@ import Container from '@mui/material/Container';
 
 const Signin = () => {
   return (
-    <div>
+    <div className='mb-10'>
       <Container component="main" maxWidth="xs" className="bg-slate-100 rounded-lg">
         <CssBaseline />
         <Box

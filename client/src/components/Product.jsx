@@ -4,9 +4,7 @@ import ProductItems from './ProductItems.jsx'
 
 const Product = () => {
   return (
-    <Layout>
       <ProductItems/>
-    </Layout>
   )
 }
 
