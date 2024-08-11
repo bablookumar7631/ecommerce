@@ -6,23 +6,23 @@ import SearchIcon from '@mui/icons-material/Search';
 const Layout = ({children}) => {
   return (
     <div>
-      <nav className='bg-gray-200 p-2 px-10'>
-        <div className='flex justify-between'>
+      <nav className='bg-gray-200 p-2 px-10 sticky top-0 left-0 shadow-md'>
+        <div className='flex justify-between items-center'>
         <Link to={'/'}><img src="./images/ecommerce.png" alt="website-logo" className='w-12 h-12'/></Link>
         
 
-      <div className="relative w-[35%]">
-        {/* Search Icon */}
-        <SearchIcon 
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" 
-        />
-        {/* Input Field */}
-        <input 
-          type="search" 
-          placeholder="Search for products, brands and more..." 
-          className="bg-gray-300 pl-10 pr-3 py-2 w-full rounded-lg outline-none border-blue-100" 
-        />
-      </div>
+        <div className="relative w-[35%]">
+          {/* Search Icon */}
+          <SearchIcon 
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" 
+          />
+          {/* Input Field */}
+          <input 
+            type="search" 
+            placeholder="Search for products, brands and more..." 
+            className="bg-white pl-10 pr-3 py-2 w-full rounded-lg outline-none" 
+          />
+        </div>
         
         
         <ul className='flex items-center gap-6 md:text-[17px]'>
