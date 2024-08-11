@@ -1,13 +1,30 @@
 import React from 'react'
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
 
-const Layout = () => {
+const Layout = ({children}) => {
   return (
     <div>
       <nav className='bg-gray-200 p-2 px-10'>
         <div className='flex justify-between'>
         <Link to={'/'}><img src="./images/ecommerce.png" alt="website-logo" className='w-12 h-12'/></Link>
+        
+
+      <div className="relative w-[35%]">
+        {/* Search Icon */}
+        <SearchIcon 
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" 
+        />
+        {/* Input Field */}
+        <input 
+          type="search" 
+          placeholder="Search for products, brands and more..." 
+          className="bg-gray-300 pl-10 pr-3 py-2 w-full rounded-lg outline-none border-blue-100" 
+        />
+      </div>
+        
+        
         <ul className='flex items-center gap-6 md:text-[17px]'>
             <li><Link to={'/'}>Home</Link></li>
             <li><Link to={'/product'}>Product</Link></li>
@@ -15,7 +32,27 @@ const Layout = () => {
             <li><Link to={'sign-up'}><Button variant="contained">SignUp</Button></Link></li>
         </ul>
         </div>
+
+        {/* <div>
+          <TextField
+          label="Search"
+          variant="outlined"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+        </div> */}
       </nav>
+
+      <div>
+        {children}
+      </div>
 
       <footer className='bg-blue-100'>
         <div className='w-10/12 mx-auto grid md:grid-cols-4 md:gap-16 gap-8 py-8'>
