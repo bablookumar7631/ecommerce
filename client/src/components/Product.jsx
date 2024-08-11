@@ -1,10 +1,12 @@
 import React from 'react'
+import Layout from './Layout.jsx'
+import ProductItems from './ProductItems.jsx'
 
 const Product = () => {
   return (
-    <div>
-      <h1>product</h1>
-    </div>
+    <Layout>
+      <ProductItems/>
+    </Layout>
   )
 }
 

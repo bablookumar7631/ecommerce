@@ -6,7 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 const Layout = ({children}) => {
   return (
     <div>
-      <nav className='bg-gray-200 p-2 px-10 sticky top-0 left-0 shadow-md'>
+      <nav className='bg-gray-200 p-2 px-10 sticky top-0 left-0 shadow-md z-50'>
         <div className='flex justify-between items-center'>
         <Link to={'/'}><img src="./images/ecommerce.png" alt="website-logo" className='w-12 h-12'/></Link>
         
