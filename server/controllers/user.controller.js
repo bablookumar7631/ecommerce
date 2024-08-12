@@ -1,42 +1,62 @@
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
 import bcrypt from "bcrypt";
 
 
 
-const register = asyncHandler( async(req, res) => {
-    const { firstName, lastName, email, password } = req.body
-
-    if(
-        [firstName, lastName, email, password].some((field) => 
-            field?.trim() === ""
-        )
-    ){
-        throw new ApiError(400, "All fields are required")
+const register = async(req, res) => {
+    try {
+        const { firstName, lastName, phoneNumber, email, password, designation } = req.body
+    
+        if(
+            [firstName, lastName, phoneNumber, email, password, designation].some((field) => 
+                field?.trim() === ""
+            )
+        ){
+            return res.status(400).json({
+                message: "Something is missing",
+                success: false
+            });
+        }
+    
+        // Check if phoneNumber is exactly 10 digits
+        if (!/^\d{10}$/.test(phoneNumber)) {
+            return res.status(400).json({
+                message: "Phone number must be exactly 10 digits",
+                success: false
+            });
+        }
+    
+    
+        const existedUser = await User.findOne({email});
+    
+        if(existedUser){
+            return res.status(400).json({
+                message: 'User already exist with this email.',
+                success: false,
+            })
+        }
+    
+        const hashedPassword = await bcrypt.hash(password, 10);
+    
+        await User.create({
+            firstName,
+            lastName,
+            phoneNumber,
+            email,
+            password: hashedPassword,
+            designation
+        });
+    
+        return res.status(201).json({
+            message: "User registered Successfully.",
+            success: true
+        });
+    } catch (error) {
+        console.log(error);
     }
-
-
-    const existedUser = await User.findOne({email});
-
-    if(existedUser){
-        throw new ApiError(409, "User with this Email already exists")
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword
-    });
-
-    return res.status(201).json(
-        new ApiResponse(200, "User registered Successfully")
-    )
-} )
+}
 
 
 

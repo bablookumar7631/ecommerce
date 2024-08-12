@@ -9,15 +9,19 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
 
 const Signin = () => {
   return (
     <div className='mb-10'>
-      <Container component="main" maxWidth="xs" className="bg-slate-100 rounded-lg">
+      <Container component="main" maxWidth="xl">
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 5,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -51,6 +55,18 @@ const Signin = () => {
               id="password"
               autoComplete="current-password"
             />
+
+            <Grid item xs={12} className="flex gap-4 items-center">
+              <FormLabel id="demo-row-radio-buttons-group-label">Designation : </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+              >
+                <FormControlLabel value="user" control={<Radio />} label="user" />
+                <FormControlLabel value="admin" control={<Radio />} label="admin" />
+              </RadioGroup>
+            </Grid>
             
             <Button
               type="submit"
