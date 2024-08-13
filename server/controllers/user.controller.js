@@ -113,4 +113,27 @@ const login = async (req, res) => {
     }
 }
 
-export { register, login };
+
+const logout = async (req, res) => {
+    try {
+        res.cookie("token", "", {
+            maxAge: 0,              // Expire the cookie immediately
+            httpOnly: true,         // Prevents client-side JavaScript from accessing the cookie
+            secure: process.env.NODE_ENV === 'production',  // Ensures the cookie is only sent over HTTPS
+            sameSite: 'strict'      // Prevents the browser from sending this cookie along with cross-site requests
+        });
+
+        return res.status(200).json({
+            message: "Logged out successfully.",
+            success: true
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Logout failed. Please try again later.",
+            success: false
+        });
+    }
+}
+
+export { register, login, logout };

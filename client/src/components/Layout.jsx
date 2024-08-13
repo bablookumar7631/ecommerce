@@ -1,8 +1,9 @@
 import React from "react";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {setUser} from '../redux/authSlice'
 import Avatar from "@mui/material/Avatar";
 import { blue } from "@mui/material/colors";
 import Box from "@mui/material/Box";
@@ -11,13 +12,17 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
+import axios from 'axios';
 
 const settings = ["Profile", "Dashboard", "Logout"];
 
 const Layout = ({ children }) => {
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  
   const { user } = useSelector((store) => store.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -26,6 +31,18 @@ const Layout = ({ children }) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const logoutHandler = async() => {
+    try {
+      const res = await axios.get("http://localhost:8000/api/v1/users/logout", {withCredentials: true});
+      if(res.data.success){
+        dispatch(setUser(null));
+        navigate('/');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div>
@@ -100,7 +117,15 @@ const Layout = ({ children }) => {
                   onClose={handleCloseUserMenu}
                 >
                   {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <MenuItem 
+                    key={setting} 
+                    onClick={() => {
+                      handleCloseUserMenu();
+                      if (setting === "Logout") {
+                        logoutHandler();
+                      }
+                    }}
+                  >
                       <Typography textAlign="center">{setting}</Typography>
                     </MenuItem>
                   ))}
