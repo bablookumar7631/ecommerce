@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -13,8 +13,53 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux'
+import { setUser } from '../redux/authSlice'
 
 const Signin = () => {
+  
+  const { user } = useSelector(store => store.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    designation: 'user', // Default to "user"
+  });
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/users/login', formData);
+      if (response.status === 200) {
+        dispatch(setUser(response.data.user));
+        navigate('/');
+        alert('Login successful!');
+      }
+    } catch (error) {
+      console.error('There was an error logging in!', error);
+      alert('Login failed. Please check your credentials and try again.');
+    }
+  };
+
+  useEffect(()=>{
+    if(user){
+        navigate("/");
+    }
+  },[])
+
   return (
     <div className='mb-10'>
       <Container component="main" maxWidth="xl">
@@ -34,7 +79,7 @@ const Signin = () => {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" noValidate sx={{ mt: 1 }}>
+          <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
             <TextField
               margin="normal"
               required
@@ -44,6 +89,8 @@ const Signin = () => {
               name="email"
               autoComplete="email"
               autoFocus
+              value={formData.email}
+              onChange={handleInputChange}
             />
             <TextField
               margin="normal"
@@ -54,17 +101,21 @@ const Signin = () => {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={formData.password}
+              onChange={handleInputChange}
             />
 
             <Grid item xs={12} className="flex gap-4 items-center">
-              <FormLabel id="demo-row-radio-buttons-group-label">Designation : </FormLabel>
+              <FormLabel id="designation-label">Designation:</FormLabel>
               <RadioGroup
                 row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
+                aria-labelledby="designation-label"
+                name="designation"
+                value={formData.designation}
+                onChange={handleInputChange}
               >
-                <FormControlLabel value="user" control={<Radio />} label="user" />
-                <FormControlLabel value="admin" control={<Radio />} label="admin" />
+                <FormControlLabel value="user" control={<Radio />} label="User" />
+                <FormControlLabel value="admin" control={<Radio />} label="Admin" />
               </RadioGroup>
             </Grid>
             
@@ -77,7 +128,7 @@ const Signin = () => {
               Sign In
             </Button>
             <Grid container>
-            <Grid item>
+              <Grid item>
                 <p>Don't have an account? <Link to={'/sign-up'} className='text-blue-500'>Sign Up</Link></p>
               </Grid>
             </Grid>
@@ -85,7 +136,8 @@ const Signin = () => {
         </Box>
       </Container>
     </div>
-  )
-}
+  );
+};
 
-export default Signin
+export default Signin;
+

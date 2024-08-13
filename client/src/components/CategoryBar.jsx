@@ -42,7 +42,7 @@ const CategoryBar = () => {
         {
             category.map((cat, index) => {
                 return(
-                    <div className='flex flex-col justify-center items-center'>
+                    <div key={index} className='flex flex-col justify-center items-center'>
                         <img src={cat.thumbnail} alt="category-img" className='w-12 h-12 '/>
                         <p className='flex items-center justify-center pt-1 font-bold text-sm'>{cat.name}</p>
                     </div>

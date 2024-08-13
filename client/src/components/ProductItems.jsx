@@ -86,7 +86,7 @@ const ProductItems = () => {
         {
             products.map((item, index) => {
             return (
-                <div className="bg-white rounded-md overflow-hidden shadow-lg">
+                <div key={index} className="bg-white rounded-md overflow-hidden shadow-lg">
                 <img
                     src="./product/prod1.webp"
                     alt=""
