@@ -27,6 +27,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum:['user', 'admin'],
         required: true
+    },
+    address: {
+        type: String,
+    },
+    pincode: {
+        type: String,
+    },
+    state: {
+        type: String,
+    },
+    profilePhoto: {
+        type: String,
+        default: ''
     }
 },{timestamps:true});
 export const User = mongoose.model('User', userSchema);
