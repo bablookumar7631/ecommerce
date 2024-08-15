@@ -16,6 +16,7 @@ import FormLabel from '@mui/material/FormLabel';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from '../redux/authSlice'
+import toast from 'react-hot-toast';
 
 const Signin = () => {
   
@@ -46,11 +47,10 @@ const Signin = () => {
       if (response.status === 200) {
         dispatch(setUser(response.data.user));
         navigate('/');
-        alert('Login successful!');
+        toast.success(response.data.message);
       }
     } catch (error) {
-      console.error('There was an error logging in!', error);
-      alert('Login failed. Please check your credentials and try again.');
+      toast.error('Login failed. Please check your credentials and try again.');
     }
   };
 

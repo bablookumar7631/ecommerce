@@ -15,6 +15,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import axios from "axios";
 import { useSelector } from 'react-redux'
+import toast from 'react-hot-toast';
 
 const Signup = () => {
 
@@ -47,7 +48,7 @@ const Signup = () => {
       }
     } catch (error) {
       console.error("There was an error signing up!", error);
-      alert("Signup failed. Please try again.");
+      toast.error("Signup failed. Please try again.")
     }
   };
 
