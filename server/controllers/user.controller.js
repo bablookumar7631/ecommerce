@@ -1,6 +1,8 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import getDataUri from "../utils/datauri.js";
+import cloudinary from "../utils/cloudinary.js";
 
 const register = async(req, res) => {
     try {
@@ -117,7 +119,7 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
     try {
         res.cookie("token", "", {
-            maxAge: 0,              // Expire the cookie immediately
+            maxAge: 0,
             httpOnly: true,         // Prevents client-side JavaScript from accessing the cookie
             secure: process.env.NODE_ENV === 'production',  // Ensures the cookie is only sent over HTTPS
             sameSite: 'strict'      // Prevents the browser from sending this cookie along with cross-site requests
@@ -136,4 +138,109 @@ const logout = async (req, res) => {
     }
 }
 
-export { register, login, logout };
+
+// const updateProfile = async(req, res) => {
+//     try {
+//         const { phoneNumber, email, address, pincode, state } = req.body;
+
+
+//         const userId = req.id;
+//         let user = await User.findById(userId);
+
+//         if(!user){
+//             return res.status(400).json({
+//                 message: "User not found.",
+//                 success: false
+//             })
+//         }
+
+//         // update data
+//         if(phoneNumber) user.phoneNumber = phoneNumber;
+//         if(email) user.email = email;
+//         if(address) user.address = address;
+//         if(pincode) user.pincode = pincode;
+//         if(state) user.state = state;
+
+
+//         // Handle profile photo upload
+//         if (req.file) {
+//             const fileUri = getDataUri(req.file);
+//             const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+
+//             // Update profile photo if upload to Cloudinary is successful
+//             if (cloudResponse && cloudResponse.secure_url) {
+//                 user.profilePhoto = cloudResponse.secure_url;
+//             }
+//         }
+
+//         await user.save();
+
+//         res.status(200).json({
+//             message: "Profile updated successfully.",
+//             success: true
+//         });
+
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({
+//             message: 'Server error',
+//             error: error.message
+//         });
+//     }
+// }
+
+
+const updateProfile = async (req, res) => {
+    try {
+        const { phoneNumber, email, address, pincode, state } = req.body;
+        const userId = req.id;
+
+        console.log("User ID:", userId);
+        let user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found.",
+                success: false
+            });
+        }
+
+        // Update user fields
+        if (phoneNumber) user.phoneNumber = phoneNumber;
+        if (email) user.email = email;
+        if (address) user.address = address;
+        if (pincode) user.pincode = pincode;
+        if (state) user.state = state;
+
+        // Handle profile photo upload
+        if (req.file) {
+            console.log("File Uploaded:", req.file);
+            const fileUri = getDataUri(req.file);
+
+            try {
+                const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+                if (cloudResponse && cloudResponse.secure_url) {
+                    user.profilePhoto = cloudResponse.secure_url;
+                }
+            } catch (uploadError) {
+                console.error("Cloudinary Upload Error:", uploadError);
+            }
+        }
+
+        await user.save();
+
+        res.status(200).json({
+            message: "Profile updated successfully.",
+            success: true
+        });
+
+    } catch (error) {
+        console.error("Server Error:", error);
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
+
+export { register, login, logout, updateProfile };
