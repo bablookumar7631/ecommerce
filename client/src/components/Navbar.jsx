@@ -144,6 +144,8 @@ const Navbar = () => {
                           logoutHandler();
                         } else if (setting === "Profile") {
                           navigate("/user-profile");
+                        } else {
+                          navigate("/admin/dashboard");
                         }
                       }}
                     >
