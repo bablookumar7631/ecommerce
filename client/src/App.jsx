@@ -12,6 +12,7 @@ import AddProduct from "./components/Admin/AddProduct";
 import Payments from "./components/Admin/Payments";
 import Customers from "./components/Admin/Customers";
 import Orders from "./components/Admin/Orders";
+import AddCategory from "./components/Admin/AddCategory";
 
 const App = () => {
   return (
@@ -48,6 +49,7 @@ const App = () => {
           <Route path="orders" element={<Orders />} />
           <Route path="payments" element={<Payments />} />
           <Route path="add-product" element={<AddProduct />} />
+          <Route path="add-category" element={<AddCategory />} />
         </Route>
       </Routes>
     </BrowserRouter>

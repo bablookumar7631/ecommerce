@@ -122,6 +122,7 @@ import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentIcon from '@mui/icons-material/Payment';
 import PostAddIcon from '@mui/icons-material/PostAdd';
+import QueueIcon from '@mui/icons-material/Queue';
 
 const menus = [
   {
@@ -148,6 +149,11 @@ const menus = [
     label: 'Payments',
     icon: <PaymentIcon />,
     link: '/admin/payments'
+  },
+  {
+    label: 'Add Category',
+    icon: <QueueIcon />,
+    link: '/admin/add-category'
   },
   {
     label: 'Add Product',
