@@ -1,56 +1,48 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const CategoryBar = () => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const category = [
-        {
-            thumbnail: './category/mobile&tablet.webp',
-            name: 'Mobiles & Tablets'
-        },
-        {
-            thumbnail: './category/Tv&applience.webp',
-            name: 'TVs & Appliances'
-        },
-        {
-            thumbnail: './category/electronics.webp',
-            name: 'Electronics'
-        },
-        {
-            thumbnail: './category/fashion.webp',
-            name: 'Fashion'
-        },
-        {
-            thumbnail: './category/beauty.webp',
-            name: 'Beauty'
-        },
-        {
-            thumbnail: './category/home&kitchen.webp',
-            name: 'Home & Kitchen'
-        },
-        {
-            thumbnail: './category/furniture.webp',
-            name: 'Furniture'
-        },
-        {
-            thumbnail: './category/grocery.webp',
-            name: 'Grocery'
-        },
-    ]
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/v1/categories/getAllCategories');
+        // Access the categories array from the response object
+        setCategories(response.data.categories || []);
+      } catch (error) {
+        setError('Error fetching categories');
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className='bg-white flex gap-16 justify-center items-center py-2 pt-4'>
-        {
-            category.map((cat, index) => {
-                return(
-                    <div key={index} className='flex flex-col justify-center items-center'>
-                        <img src={cat.thumbnail} alt="category-img" className='w-12 h-12 '/>
-                        <p className='flex items-center justify-center pt-1 font-bold text-sm'>{cat.name}</p>
-                    </div>
-                )
-            })
-        }
+      {categories.length > 0 ? (
+        categories.map((cat) => (
+          <div key={cat._id} className='flex flex-col justify-center items-center cursor-pointer'>
+            <img src={cat.categoryImage} alt={cat.name} className='w-12 h-12' />
+            <p className='flex items-center justify-center pt-1 font-bold text-sm'>{cat.name}</p>
+          </div>
+        ))
+      ) : (
+        <p>No categories available</p>
+      )}
     </div>
-  )
+  );
 }
 
-export default CategoryBar
+export default CategoryBar;
+
+
+
