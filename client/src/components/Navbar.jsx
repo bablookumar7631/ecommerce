@@ -15,6 +15,8 @@ import Typography from "@mui/material/Typography";
 import axios from "axios";
 import FormatIndentIncreaseIcon from "@mui/icons-material/FormatIndentIncrease";
 import AsideDrawer from "./Admin/AsideDrawer";
+import Badge from '@mui/material/Badge';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const settings = ["Profile", "Dashboard", "Logout"];
 
@@ -153,6 +155,10 @@ const Navbar = () => {
                     </MenuItem>
                   ))}
                 </Menu>
+
+                <Badge badgeContent={4} color="primary" sx={{paddingLeft: '14px', cursor:'pointer'}}>
+                  <ShoppingCartIcon sx={{ fontSize: 26 }} color="action"  />
+                </Badge>
               </Box>
             )}
           </ul>
