@@ -55,9 +55,15 @@ const CartItems = () => {
   const cartItems = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
 
+  // Calculate total price
+  const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const gst = 20.00; // Example GST value
+  const shippingCharge = 45.00; // Example shipping charge value
+  const totalAmount = (totalPrice + gst + shippingCharge).toFixed(2);
+
   return (
-    <div className='w-10/12 mx-auto my-12 flex gap-6'>
-      <div className='w-3/5 bg-[#F0F8FF] rounded-md p-5'>
+    <div className='md:w-10/12 mx-auto my-12 md:flex gap-6 w-11/12'>
+      <div className='md:w-3/5 bg-[#F0F8FF] rounded-md p-5'>
         <h1 className='text-2xl font-bold pb-5'>Your shopping cart</h1>
         
         {cartItems.length > 0 ? (
@@ -101,8 +107,28 @@ const CartItems = () => {
         )}
       </div>
 
-      <div className='w-2/5 bg-slate-500'>
-        {/* You can add a summary or checkout component here */}
+      <div className='h-60 md:w-2/5 bg-[#F0F8FF] rounded-md p-5 md:mt-0 mt-8'>
+        <div className='flex justify-between'>
+            <p>Total Price: </p>
+            <p>₹{totalPrice.toFixed(2)}</p>
+        </div>
+        <div className='flex justify-between'>
+            <p>GST: </p>
+            <p>₹{gst.toFixed(2)}</p>
+        </div>
+        <div className='flex justify-between'>
+            <p>shipping Charge: </p>
+            <p>₹{shippingCharge.toFixed(2)}</p>
+        </div>
+
+        <hr style={{ backgroundColor: 'gray', height: '1px', border: 'none', marginTop: '8px' }} />
+
+        <div className='flex justify-between pt-2 font-semibold text-slate-600'>
+            <p>Total Amount: </p>
+            <p>₹{totalAmount}</p>
+        </div>
+
+        <button className='w-full bg-green-500 py-2 mt-6 rounded-md text-white text-lg font-semibold hover:bg-green-400'>Make Payment</button>
       </div>
     </div>
   );
