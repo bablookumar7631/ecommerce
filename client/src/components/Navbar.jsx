@@ -22,6 +22,7 @@ const settings = ["Profile", "Dashboard", "Logout"];
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
+  const { totalQuantity } = useSelector((store) => store.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const loaction = useLocation();
@@ -156,9 +157,16 @@ const Navbar = () => {
                   ))}
                 </Menu>
 
-                <Badge badgeContent={4} color="primary" sx={{paddingLeft: '14px', cursor:'pointer'}}>
-                  <ShoppingCartIcon sx={{ fontSize: 26 }} color="action"  />
-                </Badge>
+                <Link to={'/cart'}>
+                  <Badge 
+                    badgeContent={totalQuantity || 0} 
+                    color="primary" 
+                    showZero 
+                    sx={{ paddingLeft: '14px', cursor: 'pointer' }}
+                  >
+                    <ShoppingCartIcon sx={{ fontSize: 26 }} color="action" />
+                  </Badge>
+                </Link>
               </Box>
             )}
           </ul>

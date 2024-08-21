@@ -13,6 +13,7 @@ import Payments from "./components/Admin/Payments";
 import Customers from "./components/Admin/Customers";
 import Orders from "./components/Admin/Orders";
 import AddCategory from "./components/Admin/AddCategory";
+import CartItems from "./components/CartItems";
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
           <Route path="/sign-in" element={<Signin />} />
           <Route path="/sign-up" element={<Signup />} />
           <Route path="/user-profile" element={<UserProfile />} />
+          <Route path="/cart" element={<CartItems />} />
         </Route>
         
         <Route path="/admin" element={<AdminLayout />}>
