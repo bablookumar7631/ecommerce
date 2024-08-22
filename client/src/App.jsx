@@ -14,6 +14,7 @@ import Customers from "./components/Admin/Customers";
 import Orders from "./components/Admin/Orders";
 import AddCategory from "./components/Admin/AddCategory";
 import CartItems from "./components/CartItems";
+import Category from "./components/Category";
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
           <Route path="/sign-up" element={<Signup />} />
           <Route path="/user-profile" element={<UserProfile />} />
           <Route path="/cart" element={<CartItems />} />
+          <Route path="/category/:categoryName" element={<Category />} />
         </Route>
         
         <Route path="/admin" element={<AdminLayout />}>

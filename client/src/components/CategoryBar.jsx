@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CategoryBar = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -23,6 +26,10 @@ const CategoryBar = () => {
     fetchCategories();
   }, []);
 
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/category/${categoryName}`)
+  }
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -30,7 +37,7 @@ const CategoryBar = () => {
     <div className='bg-white flex gap-16 justify-center items-center py-2 pt-4'>
       {categories.length > 0 ? (
         categories.map((cat) => (
-          <div key={cat._id} className='flex flex-col justify-center items-center cursor-pointer'>
+          <div key={cat._id} className='flex flex-col justify-center items-center cursor-pointer' onClick={() => handleCategoryClick(cat.name)}>
             <img src={cat.categoryImage} alt={cat.name} className='w-12 h-12' />
             <p className='flex items-center justify-center pt-1 font-bold text-sm'>{cat.name}</p>
           </div>
@@ -43,6 +50,7 @@ const CategoryBar = () => {
 }
 
 export default CategoryBar;
+
 
 
 

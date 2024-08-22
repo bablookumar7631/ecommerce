@@ -2,6 +2,7 @@ import { Product } from "../models/product.model.js";
 import { Category } from "../models/category.model.js";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
+import mongoose from 'mongoose';
 
 
 // Create a new product
@@ -46,6 +47,7 @@ const createProduct = async (req, res) => {
         res.status(201).json({
             message: "Product created successfully",
             success: true,
+            product
         });
     } catch (error) {
         console.error("Error creating product:", error);
@@ -59,6 +61,24 @@ const createProduct = async (req, res) => {
 
 
 // Get all products
+// const getAllProducts = async (req, res) => {
+//     try {
+//         const { limit = 10, skip = 0 } = req.query;
+//         const products = await Product.find()
+//             .populate('category', 'name')
+//             .limit(parseInt(limit))
+//             .skip(parseInt(skip));
+//         res.status(200).json({
+//             products
+//         });
+//     } catch (error) {
+//         res.status(500).json({
+//             message: "Internal Server Error",
+//             success: false
+//         });
+//     }
+// };
+
 const getAllProducts = async (req, res) => {
     try {
         const products = await Product.find().populate('category', 'name');
@@ -77,22 +97,29 @@ const getAllProducts = async (req, res) => {
 // Get a single product by ID
 const getProductById = async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                message: "Invalid Product ID",
+                success: false
+            });
+        }
+
         const product = await Product.findById(req.params.id).populate('category', 'name');
 
-        if(!product){
+        if (!product) {
             return res.status(404).json({
                 message: "Product not found",
                 success: false
-            })
+            });
         }
         res.status(200).json({
             product
-        })
+        });
     } catch (error) {
         res.status(500).json({
             message: "Internal Server Error",
             success: false
-        })
+        });
     }
 };
 
@@ -108,6 +135,10 @@ const deleteProduct = async (req, res) => {
             })
         }
 
+        // Remove the product image from Cloudinary
+        const publicId = product.prodImage.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+
         await product.remove();
         res.status(200).json({
             message: "Product deleted successfully",
@@ -122,4 +153,81 @@ const deleteProduct = async (req, res) => {
 };
 
 
-export {createProduct, getAllProducts, getProductById, deleteProduct}
+// Get products by category ID
+// const getCategoryByProducts = async (req, res) => {
+//     try {
+//         const { categoryId } = req.params;
+
+//         // Check if the category ID is valid
+//         if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+//             return res.status(400).json({
+//                 message: "Invalid Category ID",
+//                 success: false
+//             });
+//         }
+
+//         // Check if the category exists
+//         const categoryExists = await Category.findById(categoryId);
+//         if (!categoryExists) {
+//             return res.status(404).json({
+//                 message: "Category not found",
+//                 success: false
+//             });
+//         }
+
+//         // Get products by category ID
+//         const products = await Product.find({ category: categoryId }).populate('category', 'name');
+
+//         // Respond with the products
+//         res.status(200).json({
+//             products,
+//             success: true
+//         });
+//     } catch (error) {
+//         console.error("Error fetching products by category:", error);
+//         res.status(500).json({
+//             message: "Internal Server Error",
+//             success: false
+//         });
+//     }
+// };
+
+
+const getCategoryByProducts = async (req, res) => {
+    try {
+      const { categoryName } = req.params;
+  
+      if (!categoryName) {
+        return res.status(400).json({
+          message: "Category name is required",
+          success: false
+        });
+      }
+  
+      // Fetch category by name
+      const category = await Category.findOne({ name: categoryName });
+      if (!category) {
+        return res.status(404).json({
+          message: "Category not found",
+          success: false
+        });
+      }
+  
+      // Fetch products by category ID
+      const products = await Product.find({ category: category._id }).populate('category', 'name');
+  
+      res.status(200).json({
+        items: products,
+        success: true
+      });
+    } catch (error) {
+      console.error("Error fetching products by category:", error);
+      res.status(500).json({
+        message: "Internal Server Error",
+        success: false
+      });
+    }
+  };
+
+
+export {createProduct, getAllProducts, getProductById, deleteProduct, getCategoryByProducts}

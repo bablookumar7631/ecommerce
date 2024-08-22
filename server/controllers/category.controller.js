@@ -34,7 +34,8 @@ const createCategory = async(req, res) => {
 
         res.status(201).json({
             message: "Category created successfully",
-            success: true
+            success: true,
+            category
         })
     } catch (error) {
         console.error("Error creating category:", error);
@@ -48,7 +49,9 @@ const createCategory = async(req, res) => {
 // Get all categories
 const getAllCategories = async(req, res) => {
     try {
-        const categories = await Category.find();
+        // const categories = await Category.find();
+        const categories = await Category.find().sort({ createdAt: -1 });
+
         res.status(200).json({
             categories,
             success: true
@@ -74,6 +77,14 @@ const getCategoryById = async(req, res) => {
         res.status(200).json({
             category
         });
+
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                message: "Invalid Category ID",
+                success: false
+            });
+        }
+
     } catch (error) {
         res.status(500).json({
             message: "Internal Server Error",
@@ -93,6 +104,10 @@ const deleteCategory = async(req, res) => {
             })
         }
 
+        // Remove the category image from Cloudinary
+        const publicId = category.categoryImage.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+        
         await category.remove();
         res.status(200).json({
             message: "Category deleted successfully",
