@@ -151,7 +151,7 @@ const menus = [
     link: '/admin/payments'
   },
   {
-    label: 'Add Category',
+    label: 'Category',
     icon: <QueueIcon />,
     link: '/admin/add-category'
   },
