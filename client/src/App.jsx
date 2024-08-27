@@ -15,6 +15,7 @@ import Orders from "./components/Admin/Orders";
 import AddCategory from "./components/Admin/AddCategory";
 import CartItems from "./components/CartItems";
 import Category from "./components/Category";
+import SinglePage from "./components/SinglePage";
 
 const App = () => {
   return (
@@ -43,6 +44,7 @@ const App = () => {
           <Route path="/user-profile" element={<UserProfile />} />
           <Route path="/cart" element={<CartItems />} />
           <Route path="/category/:categoryName" element={<Category />} />
+          <Route path="/product/:id/:name" element={<SinglePage/>} />
         </Route>
         
         <Route path="/admin" element={<AdminLayout />}>
