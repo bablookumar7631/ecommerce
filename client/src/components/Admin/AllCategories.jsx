@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, TablePagination, IconButton, Grid, Typography } from '@mui/material';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 
 const columns = [
     { id: 'categoryImage', label: 'Category Image' },
-    { id: 'name', label: 'Name' },
+    { id: 'category', label: 'Category' },
     { id: 'action', label: 'Action' }
 ];
 
@@ -63,7 +64,10 @@ const AllCategories = () => {
                                     ) : 'No Image'}
                                 </TableCell>
                                 <TableCell>{row.name}</TableCell>
-                                <TableCell>
+                                <TableCell sx={{display:'flex', gap:'12px'}}>
+                                    <IconButton>
+                                        <EditNoteIcon color="primary"/>
+                                    </IconButton>
                                     <IconButton>
                                         <DeleteIcon color="error" />
                                     </IconButton>

@@ -462,7 +462,7 @@ const AddCategory = () => {
                 variant="contained"
                 color="primary"
                 fullWidth
-                sx={{ marginTop: 2 }}
+                sx={{ marginTop: 1, marginBottom: 4 }}
                 onClick={handleSubmit}
               >
                 Submit
