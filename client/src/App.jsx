@@ -16,6 +16,7 @@ import AddCategory from "./components/Admin/AddCategory";
 import CartItems from "./components/CartItems";
 import Category from "./components/Category";
 import SinglePage from "./components/SinglePage";
+import NotFound from "./components/NotFound";
 
 const App = () => {
   return (
@@ -57,6 +58,8 @@ const App = () => {
           <Route path="add-product" element={<AddProduct />} />
           <Route path="add-category" element={<AddCategory />} />
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
