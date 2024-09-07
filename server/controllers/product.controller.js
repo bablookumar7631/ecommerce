@@ -94,6 +94,24 @@ const getAllProducts = async (req, res) => {
 };
 
 
+const searchProducts = async (req, res) => {
+    try {
+        const { query } = req.query;
+        if (!query) {
+            return res.status(400).json({ message: "Query parameter is required", success: false });
+        }
+
+        // Example search logic
+        const products = await Product.find({ name: { $regex: query, $options: 'i' } });
+
+        res.status(200).json({ products, success: true });
+    } catch (error) {
+        console.error("Error fetching products:", error);  // Log the error
+        res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+};
+
+  
 // Get a single product by ID
 const getProductById = async (req, res) => {
     try {
@@ -230,4 +248,4 @@ const getCategoryByProducts = async (req, res) => {
   };
 
 
-export {createProduct, getAllProducts, getProductById, deleteProduct, getCategoryByProducts}
+export {createProduct, getAllProducts, getProductById, deleteProduct, getCategoryByProducts, searchProducts}

@@ -17,6 +17,7 @@ import CartItems from "./components/CartItems";
 import Category from "./components/Category";
 import SinglePage from "./components/SinglePage";
 import NotFound from "./components/NotFound";
+import SearchResults from "./components/SearchResults";
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/cart" element={<CartItems />} />
           <Route path="/category/:categoryName" element={<Category />} />
           <Route path="/product/:id/:name" element={<SinglePage/>} />
+          <Route path="/search" element={<SearchResults />} />
         </Route>
         
         <Route path="/admin" element={<AdminLayout />}>

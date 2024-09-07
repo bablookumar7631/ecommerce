@@ -25,7 +25,7 @@ const Navbar = () => {
   const { totalQuantity } = useSelector((store) => store.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const loaction = useLocation();
+  const location = useLocation();
 
   const isAdminRoute = location.pathname.startsWith("/admin");
 
@@ -53,17 +53,19 @@ const Navbar = () => {
     }
   };
 
+  const handleSearch = (event) => {
+    if (event.key === "Enter") {
+      const query = event.target.value.trim();
+      if (query) {
+        navigate(`/search?q=${query}`);
+      }
+    }
+  };
+
   return (
     <div>
       <nav className="bg-gray-200 p-2 px-10 sticky top-0 left-0 shadow-md z-50">
         <div className="flex justify-between items-center">
-          {/* <Link to={"/"}>
-            <img
-              src="./images/ecommerce.png"
-              alt="website-logo"
-              className="w-12 h-12"
-            />
-          </Link> */}
           {isAdminRoute ? (
             <AsideDrawer>
               <FormatIndentIncreaseIcon />
@@ -79,13 +81,12 @@ const Navbar = () => {
           )}
 
           <div className="relative w-[35%]">
-            {/* Search Icon */}
             <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            {/* Input Field */}
             <input
               type="search"
               placeholder="Search for products, brands and more..."
               className="bg-white pl-10 pr-3 py-2 w-full rounded-lg outline-none"
+              onKeyPress={handleSearch}
             />
           </div>
 
