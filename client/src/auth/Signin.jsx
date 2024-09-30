@@ -9,59 +9,74 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux'
-import { setUser } from '../redux/authSlice'
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../redux/authSlice';
 import toast from 'react-hot-toast';
 
 const Signin = () => {
-  
-  const { user } = useSelector(store => store.auth);
+  const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    designation: 'user', // Default to "user"
   });
-
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.email) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'Invalid email';
+    }
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/users/login', formData);
-      if (response.status === 200) {
-        dispatch(setUser(response.data.user));
+      const res = await axios.post('http://localhost:8000/api/v1/users/login', formData, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      });
+      if (res.status === 200) {
+        dispatch(setUser(res.data.user));
         navigate('/');
-        toast.success(response.data.message);
+        toast.success(res.data.message);
       }
     } catch (error) {
       toast.error('Login failed. Please check your credentials and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(()=>{
-    if(user){
-        navigate("/");
+  useEffect(() => {
+    if (user) {
+      navigate('/');
     }
-  },[])
+  }, [user]);
 
   return (
-    <div className='mb-10'>
+    <div className="mb-10">
       <Container component="main" maxWidth="xl">
         <CssBaseline />
         <Box
@@ -70,7 +85,7 @@ const Signin = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: "20px"
+            padding: '20px',
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: '#FFAE42' }}>
@@ -79,7 +94,12 @@ const Signin = () => {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
+          <Box
+            component="form"
+            noValidate
+            sx={{ mt: 1 }}
+            onSubmit={handleSubmit}
+          >
             <TextField
               margin="normal"
               required
@@ -91,6 +111,8 @@ const Signin = () => {
               autoFocus
               value={formData.email}
               onChange={handleInputChange}
+              error={errors.email ? true : false}
+              helperText={errors.email}
             />
             <TextField
               margin="normal"
@@ -103,33 +125,26 @@ const Signin = () => {
               autoComplete="current-password"
               value={formData.password}
               onChange={handleInputChange}
+              error={errors.password ? true : false}
+              helperText={errors.password}
             />
-
-            <Grid item xs={12} className="flex gap-4 items-center">
-              <FormLabel id="designation-label">Designation:</FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="designation-label"
-                name="designation"
-                value={formData.designation}
-                onChange={handleInputChange}
-              >
-                <FormControlLabel value="user" control={<Radio />} label="User" />
-                <FormControlLabel value="admin" control={<Radio />} label="Admin" />
-              </RadioGroup>
-            </Grid>
-            
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
             >
-              Sign In
+              {loading ? 'Loading...' : 'Sign In'}
             </Button>
             <Grid container>
               <Grid item>
-                <p>Don't have an account? <Link to={'/sign-up'} className='text-blue-500'>Sign Up</Link></p>
+                <p>
+                  Don't have an account?{' '}
+                  <Link to={'/sign-up'} className="text-blue-500">
+                    Sign Up
+                  </Link>
+                </p>
               </Grid>
             </Grid>
           </Box>
@@ -140,4 +155,3 @@ const Signin = () => {
 };
 
 export default Signin;
-

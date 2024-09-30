@@ -9,10 +9,6 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
 import axios from "axios";
 import { useSelector } from 'react-redux'
 import toast from 'react-hot-toast';
@@ -42,8 +38,13 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/api/v1/users/register", formData);
-      if (response.status === 201) {
+      const res = await axios.post("http://localhost:8000/api/v1/users/register", formData, {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        withCredentials: true
+      });
+      if (res.status === 201) {
         navigate("/sign-in");
       }
     } catch (error) {
@@ -147,20 +148,6 @@ const Signup = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                 />
-              </Grid>
-
-              <Grid item xs={12} className="flex gap-4 items-center">
-                <FormLabel id="designation-label">Designation:</FormLabel>
-                <RadioGroup
-                  row
-                  aria-labelledby="designation-label"
-                  name="designation"
-                  value={formData.designation}
-                  onChange={handleInputChange}
-                >
-                  <FormControlLabel value="user" control={<Radio />} label="User" />
-                  <FormControlLabel value="admin" control={<Radio />} label="Admin" />
-                </RadioGroup>
               </Grid>
             </Grid>
             <Button
