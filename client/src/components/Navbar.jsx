@@ -97,6 +97,16 @@ const Navbar = () => {
             <li>
               <Link to={"/product"}>Product</Link>
             </li>
+            <Link to={'/cart'}>
+                  <Badge 
+                    badgeContent={totalQuantity || 0} 
+                    color="primary" 
+                    showZero 
+                    sx={{ paddingLeft: '14px', cursor: 'pointer' }}
+                  >
+                    <ShoppingCartIcon sx={{ fontSize: 26 }} color="action" />
+                  </Badge>
+                </Link>
             {!user ? (
               <>
                 <li>
@@ -116,7 +126,7 @@ const Navbar = () => {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt={user.firstName.charAt(0)}
-                      src="/static/images/avatar/2.jpg"
+                      src={user.profilePhoto}
                       sx={{ width: 35, height: 35, bgcolor: blue[300] }}
                     >
                       {!user.image && user.firstName.charAt(0)}
@@ -157,17 +167,6 @@ const Navbar = () => {
                     </MenuItem>
                   ))}
                 </Menu>
-
-                <Link to={'/cart'}>
-                  <Badge 
-                    badgeContent={totalQuantity || 0} 
-                    color="primary" 
-                    showZero 
-                    sx={{ paddingLeft: '14px', cursor: 'pointer' }}
-                  >
-                    <ShoppingCartIcon sx={{ fontSize: 26 }} color="action" />
-                  </Badge>
-                </Link>
               </Box>
             )}
           </ul>
