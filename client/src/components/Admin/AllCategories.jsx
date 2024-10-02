@@ -1,8 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, TablePagination, IconButton, Grid, Typography } from '@mui/material';
+import {
+    TableContainer,
+    Paper,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    TablePagination,
+    IconButton,
+    Grid,
+    Typography,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+} from '@mui/material';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
+import UpdateCategory from './UpdateCategory'; // Import the UpdateCategory component
 
 const columns = [
     { id: 'categoryImage', label: 'Category Image' },
@@ -14,13 +30,15 @@ const AllCategories = () => {
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [selectedCategory, setSelectedCategory] = useState(null); // To track the category for editing
+    const [openDialog, setOpenDialog] = useState(false); // To control the dialog open state
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const response = await axios.get('http://localhost:8000/api/v1/categories/getAllCategories');
                 if (response.data && response.data.categories) {
-                    setRows(response.data.categories); // Update this line to access the categories array
+                    setRows(response.data.categories);
                 } else {
                     console.error("Unexpected data format:", response.data);
                 }
@@ -32,6 +50,29 @@ const AllCategories = () => {
         fetchCategories();
     }, []);
 
+    // Function to delete a category
+    const handleDeleteCategory = async (categoryId) => {
+        if (window.confirm("Are you sure you want to delete this category?")) {
+            try {
+                const response = await axios.delete(`http://localhost:8000/api/v1/categories/deleteCategory/${categoryId}`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
+                });
+                if (response.data.success) {
+                    setRows((prevRows) => prevRows.filter((row) => row._id !== categoryId));
+                    alert("Category deleted successfully");
+                } else {
+                    alert("Failed to delete category");
+                }
+            } catch (error) {
+                console.error("Error deleting category:", error);
+                alert("Error deleting category");
+            }
+        }
+    };
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -39,6 +80,25 @@ const AllCategories = () => {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+    };
+
+    const handleEditCategory = (category) => {
+        setSelectedCategory(category); // Set the selected category for editing
+        setOpenDialog(true); // Open the dialog
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false); // Close the dialog
+        setSelectedCategory(null); // Clear the selected category
+    };
+
+    // Function to update a category in the local state
+    const updateCategory = (updatedCategory) => {
+        setRows((prevRows) => 
+            prevRows.map((row) => 
+                row._id === updatedCategory._id ? updatedCategory : row
+            )
+        );
     };
 
     return (
@@ -64,11 +124,11 @@ const AllCategories = () => {
                                     ) : 'No Image'}
                                 </TableCell>
                                 <TableCell>{row.name}</TableCell>
-                                <TableCell sx={{display:'flex', gap:'12px'}}>
-                                    <IconButton>
-                                        <EditNoteIcon color="primary"/>
+                                <TableCell sx={{ display: 'flex', gap: '12px' }}>
+                                    <IconButton onClick={() => handleEditCategory(row)}>
+                                        <EditNoteIcon color="primary" />
                                     </IconButton>
-                                    <IconButton>
+                                    <IconButton onClick={() => handleDeleteCategory(row._id)}>
                                         <DeleteIcon color="error" />
                                     </IconButton>
                                 </TableCell>
@@ -86,11 +146,24 @@ const AllCategories = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </TableContainer>
+
+            {/* Dialog for UpdateCategory */}
+            <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+                <DialogTitle>Update Category</DialogTitle>
+                <DialogContent>
+                    {selectedCategory && (
+                        <UpdateCategory 
+                            category={selectedCategory} 
+                            onClose={handleCloseDialog} 
+                            updateCategory={updateCategory} // Pass the update function
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
 
 export default AllCategories;
-
 
 

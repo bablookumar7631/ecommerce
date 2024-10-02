@@ -106,19 +106,85 @@ const deleteCategory = async(req, res) => {
 
         // Remove the category image from Cloudinary
         const publicId = category.categoryImage.split('/').pop().split('.')[0];
-        await cloudinary.uploader.destroy(publicId);
+        if(publicId){
+            await cloudinary.uploader.destroy(publicId);
+        }
         
-        await category.remove();
+        await Category.findByIdAndDelete(req.params.id);
         res.status(200).json({
             message: "Category deleted successfully",
             success: true
         })
     } catch (error) {
+        console.error("Error while deleting category:", error);
         res.status(500).json({
             message: "Internal Server Error",
+            error: error.message,
             success: false
         })
     }
 }
 
-export {createCategory, getAllCategories, getCategoryById, deleteCategory};
+
+// update category
+const updateCategory = async(req, res) => {
+    try {
+        const { name } = req.body;
+        const categoryId = req.params.id;
+
+        // find the category by ID
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({
+                message: "Category not found",
+                success: false
+            });
+        }
+
+        // If a new image is uploaded, replace the old image in Cloudinary
+        if (req.file) {
+            const publicId = category.categoryImage.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+
+            // Stream the file buffer directly to Cloudinary
+            const uploadedImage = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream({ folder: 'categories' }, (error, result) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve(result);
+                });
+                uploadStream.end(req.file.buffer);  // Use the buffer from memory storage
+            });
+
+            // Update the category's image URL
+            category.categoryImage = uploadedImage.secure_url;
+        }
+
+        // Update the category name if provided
+        if (name) {
+            category.name = name;
+        }
+
+        await category.save();
+
+        res.status(200).json({
+            message: "Category updated successfully",
+            success: true,
+            category
+        });
+
+    } catch (error) {
+        console.error("Error updating category:", error);
+        res.status(500).json({
+            message: "Internal Server Error",
+            success: false,
+            error: error.message
+        });
+    }
+}
+
+
+
+
+export {createCategory, getAllCategories, getCategoryById, deleteCategory, updateCategory};
