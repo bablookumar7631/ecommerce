@@ -1,16 +1,3 @@
-// import React from 'react'
-
-// const Products = () => {
-//   return (
-//     <div>
-//       Product
-//     </div>
-//   )
-// }
-
-// export default Products
-
-
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, Grid, Typography, IconButton } from '@mui/material';
 import axios from 'axios';
@@ -53,6 +40,32 @@ const Products = () => {
     setPage(0);
   };
 
+
+  // Function to delete a product
+  const handleDeleteProduct = async (productId) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        const response = await axios.delete(`http://localhost:8000/api/v1/products/delete-product/${productId}`, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        });
+  
+        if (response.data.success) {
+          // Update the products state after deletion
+          setProducts((prevProducts) => prevProducts.filter((product) => product._id !== productId));
+          alert("Product deleted successfully");
+        } else {
+          alert("Failed to delete product");
+        }
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Error deleting product");
+      }
+    }
+  };
+
   return (
     <div>
       <Grid item xs={12} sx={{ width: 8/12, mx: 'auto', mt: 2 }}>
@@ -85,7 +98,7 @@ const Products = () => {
                   <IconButton>
                     <EditNoteIcon color="primary"/>
                   </IconButton>
-                  <IconButton>
+                  <IconButton onClick={() => handleDeleteProduct(product._id)}>
                     <DeleteIcon color="error" />
                   </IconButton>
                 </TableCell>
@@ -108,6 +121,3 @@ const Products = () => {
 };
 
 export default Products;
-
-
-

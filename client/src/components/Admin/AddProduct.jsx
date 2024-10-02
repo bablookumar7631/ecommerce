@@ -52,19 +52,24 @@ const AddProduct = () => {
     e.preventDefault();
     try {
       const formDataToSend = new FormData();
+      
+      // Only append fields that have values
       Object.keys(formData).forEach((key) => {
-        formDataToSend.append(key, formData[key]);
+        if (formData[key]) { // Check if the value exists
+          formDataToSend.append(key, formData[key]);
+        }
       });
-
+  
       const response = await axios.post('http://localhost:8000/api/v1/products/products', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        withCredentials: true,
       });
-
+  
       if (response.data.success) {
         toast.success(response.data.message);
-        // reset the form
+        // Reset the form
         setFormData({
           name: '',
           description: '',
@@ -76,6 +81,7 @@ const AddProduct = () => {
         });
       }
     } catch (error) {
+      console.error(error.response?.data || error);
       toast.error('Failed to create product');
     }
   };
