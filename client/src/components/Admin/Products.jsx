@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Table
 import axios from 'axios';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
   { id: 'productImage', label: 'Product Image' },
@@ -17,6 +18,7 @@ const Products = () => {
   const [products, setProducts] = useState([]); // Initialize as an empty array
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -33,6 +35,10 @@ const Products = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+
+  const handleEditProduct = (productId) => {
+    navigate(`/admin/update-product/${productId}`);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -95,7 +101,10 @@ const Products = () => {
                 <TableCell>{product.discount || 'N/A'}%</TableCell>
                 <TableCell>{product.category?.name || 'N/A'}</TableCell>
                 <TableCell sx={{display:'flex', gap:'12px'}}>
-                  <IconButton>
+                  {/* <IconButton>
+                    <EditNoteIcon color="primary"/>
+                  </IconButton> */}
+                  <IconButton onClick={() => handleEditProduct(product._id)}>
                     <EditNoteIcon color="primary"/>
                   </IconButton>
                   <IconButton onClick={() => handleDeleteProduct(product._id)}>
@@ -121,3 +130,4 @@ const Products = () => {
 };
 
 export default Products;
+

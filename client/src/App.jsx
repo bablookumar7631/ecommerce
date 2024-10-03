@@ -46,6 +46,7 @@ const App = () => {
           <Route path="add-product" element={<AddProduct />} />
           <Route path="add-category" element={<AddCategory />} />
           <Route path="update-category" element={<UpdateCategory />} />
+          <Route path="update-product/:productId" element={<AddProduct />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

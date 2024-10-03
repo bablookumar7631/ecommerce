@@ -247,5 +247,65 @@ const getCategoryByProducts = async (req, res) => {
     }
   };
 
+  const updateProduct = async(req, res) =>{
+    try {
+        const { id } = req.params;
+        const { name, description, price, category,discount, discounted_price } = req.body;
 
-export {createProduct, getAllProducts, getProductById, deleteProduct, getCategoryByProducts, searchProducts}
+        // Validate product existence
+        const product = await Product.findById(id);
+        if(!product){
+            return res.status(404).json({
+                message: "Product not found",
+                success: false
+            });
+        }
+
+        // Validate if category exists if it's being updated
+        if(category){
+            const categoryExists = await Category.findById(category);
+            if(!categoryExists){
+                return res.status(404).json({
+                    message: "Category not found",
+                    success: false
+                });
+            }
+        }
+
+        // If a new image is uploaded, handle file upload to Cloudinary
+        let updatedProdImage = product.prodImage;
+        if(req.file){
+            const file = req.file;
+            const fileUri = getDataUri(file);
+            const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+            updatedProdImage = cloudResponse.secure_url;
+        }
+
+        // Update product fields if provided in the request body
+        product.name = name || product.name;
+        product.description = description || product.description;
+        product.price = price || product.price;
+        product.category = category || product.category;
+        product.discount = discount || product.discount;
+        product.discounted_price = discounted_price || product.discounted_price;
+        product.prodImage = updatedProdImage;
+
+        await product.save();
+
+        res.status(200).json({
+            message: "Product updated successfully",
+            success: true,
+            product
+        });
+
+    } catch (error) {
+        console.error("Error updating product:", error);
+        res.status(500).json({
+            message: "Internal Server Error",
+            success: false
+        });
+    }
+  }
+
+
+export {createProduct, getAllProducts, getProductById, deleteProduct, getCategoryByProducts, searchProducts, updateProduct}

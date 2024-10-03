@@ -1,40 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { TextField, Button, MenuItem, Grid, Typography } from '@mui/material';
-import axios from 'axios';
-import toast from 'react-hot-toast';
+import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { TextField, Button, MenuItem, Grid, Typography } from "@mui/material";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const AddProduct = () => {
+  const { productId } = useParams(); // Get productId from the route
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    category: '',
-    discount: '',
-    discounted_price: '',
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    discount: "",
+    discounted_price: "",
     prodImage: null,
   });
 
   useEffect(() => {
-    // Fetch categories from the backend when the component mounts
+    // Fetch categories from the backend
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/v1/categories/getAllCategories');
+        const response = await axios.get(
+          "http://localhost:8000/api/v1/categories/getAllCategories"
+        );
         setCategories(response.data.categories);
       } catch (error) {
-        toast.error("Error fetching categories")
+        toast.error("Error fetching categories");
       }
     };
 
     fetchCategories();
-  }, []);
+
+    // If productId exists, fetch the product details for editing
+    if (productId) {
+      const fetchProductDetails = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8000/api/v1/products/getproductbyid/${productId}`
+          );
+          const productData = response.data.product;
+          setFormData({
+            ...productData,
+            category: productData.category._id, // Ensure category is set correctly
+          });
+        } catch (error) {
+          toast.error("Failed to load product details");
+        }
+      };
+
+      fetchProductDetails();
+    }
+  }, [productId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     let updatedData = { ...formData, [name]: value };
 
-    // Calculate the discounted price whenever price or discount changes
-    if (name === 'price' || name === 'discount') {
+    if (name === "price" || name === "discount") {
       const price = parseFloat(updatedData.price) || 0;
       const discount = parseFloat(updatedData.discount) || 0;
       const discounted_price = price - (price * discount) / 100;
@@ -50,47 +74,58 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (formData[key]) formDataToSend.append(key, formData[key]);
+    });
+
     try {
-      const formDataToSend = new FormData();
-      
-      // Only append fields that have values
-      Object.keys(formData).forEach((key) => {
-        if (formData[key]) { // Check if the value exists
-          formDataToSend.append(key, formData[key]);
+      if (productId) {
+        // Update the product
+        const response = await axios.put(
+          `http://localhost:8000/api/v1/products/update-product/${productId}`,
+          formDataToSend,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true,
+          }
+        );
+        if (response.data.success) {
+          toast.success("Product updated successfully");
+          navigate("/admin/products"); // Go back to products after updating
         }
-      });
-  
-      const response = await axios.post('http://localhost:8000/api/v1/products/products', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true,
-      });
-  
-      if (response.data.success) {
-        toast.success(response.data.message);
-        // Reset the form
-        setFormData({
-          name: '',
-          description: '',
-          price: '',
-          category: '',
-          discount: '',
-          discounted_price: '',
-          prodImage: null,
-        });
+      } else {
+        // Add a new product
+        const response = await axios.post(
+          "http://localhost:8000/api/v1/products/products",
+          formDataToSend,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true,
+          }
+        );
+        if (response.data.success) {
+          toast.success("Product created successfully");
+          navigate("/admin/products");
+        }
       }
     } catch (error) {
-      console.error(error.response?.data || error);
-      toast.error('Failed to create product');
+      toast.error("Failed to submit product");
     }
+  };
+
+  const handleCancel = () => {
+    navigate("/admin/products"); // Go back to the product list without saving
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container spacing={3} sx={{ width: 6 / 12, mx: 'auto', mt: 2 }}>
+      <Grid container spacing={3} sx={{ width: 6 / 12, mx: "auto", mt: 2 }}>
         <Grid item xs={12}>
-          <Typography variant="h6">Add New Product</Typography>
+          <Typography variant="h6">
+            {productId ? "Update Product" : "Add New Product"}
+          </Typography>
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -167,7 +202,7 @@ const AddProduct = () => {
             variant="contained"
             component="label"
             fullWidth
-            sx={{ marginBottom: 2, bgcolor: 'gray' }}
+            sx={{ marginBottom: 2, bgcolor: "gray" }}
           >
             Upload Product Image
             <input
@@ -180,13 +215,18 @@ const AddProduct = () => {
           </Button>
         </Grid>
         <Grid item xs={12}>
+          <Button variant="contained" color="primary" fullWidth type="submit">
+            {productId ? "Update" : "Submit"}
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
           <Button
-            type="submit"
-            variant="contained"
-            color="primary"
+            variant="outlined"
+            color="secondary"
             fullWidth
+            onClick={handleCancel}
           >
-            Submit
+            Cancel
           </Button>
         </Grid>
       </Grid>
@@ -195,5 +235,3 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
-
-
