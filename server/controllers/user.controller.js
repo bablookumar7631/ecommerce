@@ -5,10 +5,9 @@ import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 
 const register = async(req, res) => {
+    const { firstName, lastName, phoneNumber, email, password } = req.body;
     try {
-        const { firstName, lastName, phoneNumber, email, password, designation } = req.body;
-
-        if ([firstName, lastName, phoneNumber, email, password, designation].some(field => !field || field.trim() === "")) {
+        if ([firstName, lastName, phoneNumber, email, password].some(field => !field || field.trim() === "")) {
             return res.status(400).json({
                 message: "Something is missing",
                 success: false
@@ -30,7 +29,6 @@ const register = async(req, res) => {
             phoneNumber,
             email,
             password: hashedPassword,
-            designation
         });
 
         return res.status(201).json({
@@ -48,10 +46,10 @@ const register = async(req, res) => {
 }
 
 const login = async (req, res) => {
-    try {
-        const { email, password, designation } = req.body;
+    const { email, password } = req.body;
 
-        if (!email || !password || !designation) {
+    try {
+        if (!email || !password) {
             return res.status(400).json({
                 message: "All fields are required",
                 success: false
@@ -74,37 +72,34 @@ const login = async (req, res) => {
             });
         }
 
-        if (user.designation !== designation) {
-            return res.status(400).json({
-                message: "Account doesn't exist with the current designation.",
-                success: false
-            });
-        }
+        const token = jwt.sign({
+            id: user._id,
+            designation: user.designation
+        },
+        process.env.SECRET_KEY, {
+            expiresIn: '1d'
+        });
 
-        const tokenData = { userId: user._id };
-        const token = jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' });
-
-        const responseUser = {
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            designation: user.designation,
-        };
-
-        return res.status(200)
-            .cookie("token", token, { 
-                maxAge: 1 * 24 * 60 * 60 * 1000, 
-                httpOnly: true, 
-                sameSite: 'strict',
-                secure: process.env.NODE_ENV === 'production'
-            })
-            .json({
-                message: `Welcome back ${responseUser.firstName} ${responseUser.lastName}`,
-                user: responseUser,
-                success: true
-            });
+        res.cookie('token', token, { 
+            httpOnly: true, 
+            maxAge: 24 * 60 * 60 * 1000, 
+            secure: process.env.NODE_ENV === 'production', 
+            sameSite: 'Lax' 
+        }).json({
+            message: `Welcome back ${user.firstName} ${user.lastName}`,
+            user: { 
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+                designation: user.designation,
+                profilePhoto: user.profilePhoto,
+                address: user.address,
+                pincode: user.pincode,
+                state: user.state
+            },
+        });
 
     } catch (error) {
         console.error(error);
@@ -120,7 +115,7 @@ const logout = async (req, res) => {
     try {
         res.cookie("token", "", {
             maxAge: 0,
-            httpOnly: true,         // Prevents client-side JavaScript from accessing the cookie
+            httpOnly: true,
             secure: process.env.NODE_ENV === 'production',  // Ensures the cookie is only sent over HTTPS
             sameSite: 'strict'      // Prevents the browser from sending this cookie along with cross-site requests
         });
@@ -139,39 +134,75 @@ const logout = async (req, res) => {
 }
 
 
-// const updateProfile = async(req, res) => {
+const updateProfileImg = async (req, res) => {
+    try {
+  
+      const tokenData = req.user;
+      const userId = tokenData.id;
+  
+      if (!req.file) {
+        return res.status(400).json({
+          message: "No image file uploaded",
+          success: false
+        });
+      }
+  
+      const file = req.file;
+      const fileUri = getDataUri(file);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
+        folder: 'profile_images',
+      });
+  
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+          success: false
+        });
+      }
+  
+      // Update user's profile image URL
+      user.profilePhoto = cloudResponse.secure_url;
+      await user.save();
+  
+      return res.status(200).json({
+        message: "Profile image updated successfully.",
+        success: true,
+        profilePhoto: cloudResponse.secure_url
+      });
+  
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: "Failed to update profile image",
+        success: false
+      });
+    }
+  };
+
+// const updateProfile = async (req, res) => {
 //     try {
 //         const { phoneNumber, email, address, pincode, state } = req.body;
+       
+//         const tokenData = req.user;
+//         const userId = tokenData.id;
 
-
-//         const userId = req.id;
+//         console.log("User ID:", userId);
 //         let user = await User.findById(userId);
 
-//         if(!user){
-//             return res.status(400).json({
+//         if (!user) {
+//             return res.status(404).json({
 //                 message: "User not found.",
 //                 success: false
-//             })
+//             });
 //         }
 
-//         // update data
-//         if(phoneNumber) user.phoneNumber = phoneNumber;
-//         if(email) user.email = email;
-//         if(address) user.address = address;
-//         if(pincode) user.pincode = pincode;
-//         if(state) user.state = state;
-
-
-//         // Handle profile photo upload
-//         if (req.file) {
-//             const fileUri = getDataUri(req.file);
-//             const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-
-//             // Update profile photo if upload to Cloudinary is successful
-//             if (cloudResponse && cloudResponse.secure_url) {
-//                 user.profilePhoto = cloudResponse.secure_url;
-//             }
-//         }
+//         // Update user fields
+//         if (phoneNumber) user.phoneNumber = phoneNumber;
+//         if (email) user.email = email;
+//         if (address) user.address = address;
+//         if (pincode) user.pincode = pincode;
+//         if (state) user.state = state;
 
 //         await user.save();
 
@@ -181,19 +212,22 @@ const logout = async (req, res) => {
 //         });
 
 //     } catch (error) {
-//         console.error(error);
+//         console.error("Server Error:", error);
 //         res.status(500).json({
 //             message: 'Server error',
 //             error: error.message
 //         });
 //     }
-// }
+// };
 
 
 const updateProfile = async (req, res) => {
     try {
         const { phoneNumber, email, address, pincode, state } = req.body;
-        const userId = req.id;
+
+        // Extract user ID from authenticated token
+        const tokenData = req.user; // Assuming middleware adds req.user
+        const userId = tokenData.id;
 
         console.log("User ID:", userId);
         let user = await User.findById(userId);
@@ -205,33 +239,38 @@ const updateProfile = async (req, res) => {
             });
         }
 
-        // Update user fields
+        // Check if email is being updated and validate uniqueness
+        if (email && email !== user.email) {
+            const emailExists = await User.findOne({ email });
+            if (emailExists) {
+                return res.status(400).json({
+                    message: "Email is already in use.",
+                    success: false
+                });
+            }
+            user.email = email; // Update email only if valid and unique
+        }
+
+        // Update user fields if they exist in request body
         if (phoneNumber) user.phoneNumber = phoneNumber;
-        if (email) user.email = email;
         if (address) user.address = address;
         if (pincode) user.pincode = pincode;
         if (state) user.state = state;
 
-        // Handle profile photo upload
-        if (req.file) {
-            console.log("File Uploaded:", req.file);
-            const fileUri = getDataUri(req.file);
-
-            try {
-                const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-                if (cloudResponse && cloudResponse.secure_url) {
-                    user.profilePhoto = cloudResponse.secure_url;
-                }
-            } catch (uploadError) {
-                console.error("Cloudinary Upload Error:", uploadError);
-            }
-        }
-
+        // Save updated user in the database
         await user.save();
 
+        // Optionally send updated user data back to the frontend
         res.status(200).json({
             message: "Profile updated successfully.",
-            success: true
+            success: true,
+            user: {
+                phoneNumber: user.phoneNumber,
+                email: user.email,
+                address: user.address,
+                pincode: user.pincode,
+                state: user.state,
+            }
         });
 
     } catch (error) {
@@ -243,4 +282,65 @@ const updateProfile = async (req, res) => {
     }
 };
 
-export { register, login, logout, updateProfile };
+
+
+
+// getting all the user which designation is user
+const getAllUser = async(req, res) => {
+    try {
+        // Fetch all users with the designation 'user'
+        const users = await User.find({ designation: 'user' });
+    
+        // Send the fetched users as a response
+        res.status(200).json({
+          success: true,
+          count: users.length,
+          data: users
+        });
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({
+          success: false,
+          message: 'Failed to fetch users'
+        });
+      }
+}
+
+
+// delete the users only by admin
+const deleteUser = async (req, res) => {
+    try {
+        // Find the user by ID
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found',
+                success: false
+            });
+        }
+
+        // Prevent deleting an admin user
+        if (user.designation === 'admin') {
+            return res.status(403).json({
+                message: 'Admin users cannot be deleted',
+                success: false
+            });
+        }
+
+        // Delete the user
+        await User.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({
+            message: 'User deleted successfully',
+            success: true
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Failed to delete user',
+            success: false
+        });
+    }
+};
+
+export { register, login, logout, updateProfile, getAllUser, deleteUser, updateProfileImg };
