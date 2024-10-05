@@ -17,8 +17,26 @@ import FormatIndentIncreaseIcon from "@mui/icons-material/FormatIndentIncrease";
 import AsideDrawer from "./Admin/AsideDrawer";
 import Badge from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import PersonIcon from '@mui/icons-material/Person';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ListItemIcon from '@mui/material/ListItemIcon';
 
-const settings = ["Profile", "Dashboard", "Logout"];
+const settings = [
+  {
+    icon : <PersonIcon/>,
+    name : "Profile"
+  },
+  {
+    icon : <ShoppingBagIcon/>,
+    name : "Orders"
+  },
+  {
+    icon : <LogoutIcon/>,
+    name : "Logout"
+  }
+]
+
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
@@ -151,19 +169,23 @@ const Navbar = () => {
                 >
                   {settings.map((setting) => (
                     <MenuItem
-                      key={setting}
+                      sx={{ px: "25px" }}
+                      key={setting.name}
                       onClick={() => {
                         handleCloseUserMenu();
-                        if (setting === "Logout") {
+                        if (setting.name === "Logout") {
                           logoutHandler();
-                        } else if (setting === "Profile") {
+                        } else if (setting.name === "Profile") {
                           navigate("/user-profile");
                         } else {
-                          navigate("/admin/dashboard");
+                          navigate("/user-orders");
                         }
                       }}
                     >
-                      <Typography textAlign="center">{setting}</Typography>
+                      <ListItemIcon sx={{pr: "15px"}}>
+                        {setting.icon}
+                      </ListItemIcon>
+                      <Typography textAlign="center">{setting.name}</Typography>
                     </MenuItem>
                   ))}
                 </Menu>
