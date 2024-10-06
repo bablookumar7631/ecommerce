@@ -103,7 +103,12 @@ const Customers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/v1/users/getAllUsers');
+        const response = await axios.get('http://localhost:8000/api/v1/users/getAllUsers', {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        });
         setRows(response.data.data);
       } catch (error) {
         console.error("Error fetching users:", error);
