@@ -70,10 +70,10 @@ const Signin = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      navigate('/');
+    if (user && user.designation === 'admin') {
+      navigate('/admin/dashboard');
     }
-  }, [user]);
+  }, [user, navigate]);
 
   return (
     <div className="mb-10">
