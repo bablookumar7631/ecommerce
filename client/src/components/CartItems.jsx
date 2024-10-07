@@ -50,16 +50,60 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart, removeFromCart } from '../redux/cartSlice';
+import {loadStripe} from '@stripe/stripe-js';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CartItems = () => {
   const cartItems = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Calculate total price
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   const gst = 20.00; // Example GST value
   const shippingCharge = 45.00; // Example shipping charge value
   const totalAmount = (totalPrice + gst + shippingCharge).toFixed(2);
+
+
+  // payment integratiopn
+  const makePayment = async () => {
+    try {
+      const stripe = await loadStripe('pk_test_51Q6p3wHWr6tD3md2CLrV5zWSpTSVxIEVh678I1BnrrLwscdLObkNjYxteHoZFOUArvDFX035tOgPNA1pIfetKicH00H2H69KEi');
+
+      // Prepare the request body
+      const body = {
+        products: cartItems,
+        totalAmount: totalAmount*100,
+        gst: gst,
+        shippingCharge: shippingCharge
+      };
+
+      const res = await axios.post('http://localhost:8000/api/v1/payments/create-checkout-session', body, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+
+      const session = res.data;
+
+      // Redirect to Stripe checkout
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.sessionId, // Using session.sessionId here
+      });
+
+      if (result.error) {
+        console.error(result.error.message);
+      }else{
+        localStorage.setItem('paymentAmount', totalAmount);
+        navigate('/payment-successful');
+      }
+    } catch (error) {
+      console.error('Payment failed:', error);
+    }
+  };
+  
 
   return (
     <div className='md:w-10/12 mx-auto my-12 md:flex gap-6 w-11/12'>
@@ -128,7 +172,7 @@ const CartItems = () => {
             <p>₹{totalAmount}</p>
         </div>
 
-        <button className='w-full bg-green-500 py-2 mt-6 rounded-md text-white text-lg font-semibold hover:bg-green-400'>Make Payment</button>
+        <button className='w-full bg-green-500 py-2 mt-6 rounded-md text-white text-lg font-semibold hover:bg-green-400' onClick={makePayment}>Make Payment</button>
       </div>
     </div>
   );
