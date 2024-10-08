@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../redux/authSlice";
+import { setUser, logout } from "../redux/authSlice";
 import Avatar from "@mui/material/Avatar";
 import { blue } from "@mui/material/colors";
 import Box from "@mui/material/Box";
@@ -63,7 +63,7 @@ const Navbar = () => {
         withCredentials: true,
       });
       if (res.data.success) {
-        dispatch(setUser(null));
+        dispatch(logout());
         navigate("/");
       }
     } catch (error) {

@@ -102,7 +102,7 @@ const App = () => {
           <Route path="/search" element={<SearchResults />} />
           <Route path="/user-orders" element={<UserOrders/>} />
         </Route>
-        
+
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="/admin/dashboard" />} />
           <Route path="dashboard" element={<AdminRoute element={Dashboard} />} />
