@@ -1,12 +1,12 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Navbar from "../Navbar";
 import AsideDrawer from "./AsideDrawer";
+import AdminNavbar from "./AdminNavbar";
 
 const AdminLayout = () => {
   return (
     <>
-      <Navbar />
+      <AdminNavbar/>
       <div>
         <Outlet />
       </div>

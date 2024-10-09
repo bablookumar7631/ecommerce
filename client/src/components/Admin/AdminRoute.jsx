@@ -12,7 +12,6 @@ const AdminRoute = ({ element: Component, ...rest }) => {
   }, [isAuthenticated, user]);
 
   if (!isAuthenticated) {
-    window.alert("You need to sign in to access this page.");
     return <Navigate to="/sign-in" />;
   }
 
