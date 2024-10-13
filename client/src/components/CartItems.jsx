@@ -56,14 +56,23 @@ import { useNavigate } from 'react-router-dom';
 
 const CartItems = () => {
   const cartItems = useSelector((state) => state.cart.cart);
+  const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  console.log(user);
+  console.log(cartItems);
 
   // Calculate total price
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  const gst = 20.00; // Example GST value
-  const shippingCharge = 45.00; // Example shipping charge value
-  const totalAmount = (totalPrice + gst + shippingCharge).toFixed(2);
+  // const gst = 20.00;
+  const gstRate = 0.18; // GST rate of 18%
+  // Calculate GST based on totalPrice
+  const gst = Number((totalPrice * gstRate).toFixed(2));
+
+  const shippingCharge = 12.00; // Example shipping charge value
+  
+  const deliveryCharge = totalPrice < 500 ? 25 : 0;
+  const totalAmount = (totalPrice + gst + shippingCharge + deliveryCharge).toFixed(2);
 
 
   // payment integratiopn
@@ -74,9 +83,11 @@ const CartItems = () => {
       // Prepare the request body
       const body = {
         products: cartItems,
+        user: user,
         totalAmount: totalAmount*100,
-        gst: gst,
-        shippingCharge: shippingCharge
+        gst: parseFloat(gst),
+        shippingCharge: shippingCharge,
+        deliveryCharge: deliveryCharge
       };
 
       const res = await axios.post('http://localhost:8000/api/v1/payments/create-checkout-session', body, {
@@ -157,12 +168,17 @@ const CartItems = () => {
             <p>₹{totalPrice.toFixed(2)}</p>
         </div>
         <div className='flex justify-between'>
-            <p>GST: </p>
+            <p>GST(18%): </p>
             <p>₹{gst.toFixed(2)}</p>
         </div>
         <div className='flex justify-between'>
-            <p>shipping Charge: </p>
+            <p>shipping charge: </p>
             <p>₹{shippingCharge.toFixed(2)}</p>
+        </div>
+
+        <div className='flex justify-between'>
+            <p>delivery charge: </p>
+            <p>₹{deliveryCharge.toFixed(2)}</p>
         </div>
 
         <hr style={{ backgroundColor: 'gray', height: '1px', border: 'none', marginTop: '8px' }} />
@@ -179,7 +195,6 @@ const CartItems = () => {
 };
 
 export default CartItems;
-
 
 
 
