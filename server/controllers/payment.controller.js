@@ -101,7 +101,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 //   }
 // };
 
-
 const createCheckoutSession = async (req, res) => {
   const { products, totalAmount, gst, shippingCharge, deliveryCharge, user } = req.body;
 
@@ -189,10 +188,9 @@ const createCheckoutSession = async (req, res) => {
         price: item.price,
         prodImage: item.image,
       })),
-      total: (totalAmount + deliveryCharge) / 100, // Convert back from paise to INR for total amount
+      total: totalAmount / 100, // Convert back from paise to INR for total amount
       gst: gst,
       shippingCharge: shippingCharge,
-      deliveryCharge: deliveryCharge,
       location: `${user.address || ''}, ${user.pincode || ''}, ${user.state || ''}`.trim() || 'Default Location',
       delivery: delivery,
       stripePaymentIntentId: session.id,
