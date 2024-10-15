@@ -305,4 +305,20 @@ const updateOrderStatus = async(req, res) =>{
   }
 }
 
-export { createCheckoutSession, getAllOrders, getUserOrders, updateOrderStatus };
+const requestCancelOrder = async(req, res) =>{
+  try {
+    const order = await Order.findByIdAndUpdate(req.params.id, { cancelRequest: true }, { new: true });
+
+    res.json({ 
+      success: true,
+      message: 'Order cancellation requested successfully', order 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error requesting order cancellation' 
+    });
+  }
+}
+
+export { createCheckoutSession, getAllOrders, getUserOrders, updateOrderStatus, requestCancelOrder };

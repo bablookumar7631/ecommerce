@@ -83,6 +83,10 @@ const orderSchema = new mongoose.Schema({
         required: true,
         enum: ['Pending', 'Paid', 'Failed'], // Track payment status
       },
+      cancelRequest: { 
+        type: Boolean, 
+        default: false 
+      },
     });
 
 export const Order = mongoose.model("Order", orderSchema);
