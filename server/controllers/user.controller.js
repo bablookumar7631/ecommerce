@@ -343,4 +343,20 @@ const deleteUser = async (req, res) => {
     }
 };
 
-export { register, login, logout, updateProfile, getAllUser, deleteUser, updateProfileImg };
+
+const totalCustomers = async(req, res) => {
+    try {
+        const totalCustomers = await User.countDocuments({ designation: 'user' });
+
+        res.json({
+            totalCustomers
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Failed to fetch total customers',
+            success: false
+        })
+    }
+}
+
+export { register, login, logout, updateProfile, getAllUser, deleteUser, updateProfileImg, totalCustomers };

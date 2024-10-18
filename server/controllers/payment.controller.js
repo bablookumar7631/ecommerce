@@ -321,4 +321,51 @@ const requestCancelOrder = async(req, res) =>{
   }
 }
 
-export { createCheckoutSession, getAllOrders, getUserOrders, updateOrderStatus, requestCancelOrder };
+const totalOrder = async(req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    
+    res.json({
+      totalOrders
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Server error',
+      success: false
+    })
+  }
+}
+
+const totalRevenue = async (req, res) => {
+  try {
+    const orders = await Order.aggregate([
+      {
+        // Match only the orders that have the status "Delivered"
+        $match: { status: 'Delivered' }
+      },
+      {
+        // Group and sum the 'total' field
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: { $toDouble: '$total' } }  // Convert 'total' to a number in case it's not
+        }
+      }
+    ]);
+    const totalRevenue = (orders[0]?.totalRevenue || 0).toFixed(2);
+
+    res.json({
+      totalRevenue
+    });
+  } catch (error) {
+    console.error('Error fetching total revenue:', error);
+    res.status(500).json({
+      message: 'Server error',
+      success: false
+    });
+  }
+};
+
+
+
+
+export { createCheckoutSession, getAllOrders, getUserOrders, updateOrderStatus, requestCancelOrder, totalOrder, totalRevenue };

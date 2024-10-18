@@ -307,5 +307,20 @@ const getCategoryByProducts = async (req, res) => {
     }
   }
 
+  const totalProducts = async(req, res) => {
+    try {
+        const totalProducts = await Product.countDocuments();
 
-export {createProduct, getAllProducts, getProductById, deleteProduct, getCategoryByProducts, searchProducts, updateProduct}
+        res.json({
+            totalProducts
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error",
+            success: false
+        })
+    }
+  }
+
+
+export {createProduct, getAllProducts, getProductById, deleteProduct, getCategoryByProducts, searchProducts, updateProduct, totalProducts}
