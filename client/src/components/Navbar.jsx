@@ -142,13 +142,13 @@ const Navbar = () => {
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar
-                      alt={user.firstName.charAt(0)}
-                      src={user.profilePhoto}
-                      sx={{ width: 35, height: 35, bgcolor: blue[300] }}
-                    >
-                      {!user.image && user.firstName.charAt(0)}
-                    </Avatar>
+                  <Avatar
+                    alt={user.firstName}
+                    src={user.profilePhoto || '/broken-image.jpg'}
+                    sx={{ width: 35, height: 35, bgcolor: blue[300] }}
+                  >
+                    {!user.profilePhoto && (user.firstName ? user.firstName.charAt(0) : '')}
+                  </Avatar>
                   </IconButton>
                 </Tooltip>
                 <Menu

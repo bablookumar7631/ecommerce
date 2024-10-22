@@ -178,47 +178,7 @@ const updateProfileImg = async (req, res) => {
         success: false
       });
     }
-  };
-
-// const updateProfile = async (req, res) => {
-//     try {
-//         const { phoneNumber, email, address, pincode, state } = req.body;
-       
-//         const tokenData = req.user;
-//         const userId = tokenData.id;
-
-//         console.log("User ID:", userId);
-//         let user = await User.findById(userId);
-
-//         if (!user) {
-//             return res.status(404).json({
-//                 message: "User not found.",
-//                 success: false
-//             });
-//         }
-
-//         // Update user fields
-//         if (phoneNumber) user.phoneNumber = phoneNumber;
-//         if (email) user.email = email;
-//         if (address) user.address = address;
-//         if (pincode) user.pincode = pincode;
-//         if (state) user.state = state;
-
-//         await user.save();
-
-//         res.status(200).json({
-//             message: "Profile updated successfully.",
-//             success: true
-//         });
-
-//     } catch (error) {
-//         console.error("Server Error:", error);
-//         res.status(500).json({
-//             message: 'Server error',
-//             error: error.message
-//         });
-//     }
-// };
+};
 
 
 const updateProfile = async (req, res) => {

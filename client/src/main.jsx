@@ -7,6 +7,7 @@ import store from "./redux/store.js";
 import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from 'react-hot-toast';
+import NotificationSnackbar from "./components/advFeature/NotificationSnackbar.jsx";
 
 const persistor = persistStore(store);
 
@@ -16,6 +17,7 @@ createRoot(document.getElementById("root")).render(
       <PersistGate loading={null} persistor={persistor}>
         <App />
         <Toaster />
+        <NotificationSnackbar />
       </PersistGate>
     </Provider>
   </StrictMode>
