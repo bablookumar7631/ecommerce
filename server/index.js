@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from "helmet";
 import connectDB from './db/index.js';
 import userRoutes from './routes/user.routes.js';
 import categoryRoutes from './routes/category.routes.js';
@@ -12,6 +13,27 @@ import paymentRoutes from './routes/payment.routes.js';
 dotenv.config();
 
 const app = express();
+
+// Helmet setup with CSP to allow necessary scripts
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                "default-src": ["'self'"],
+                "script-src": [
+                    "'self'", // Allow scripts from the same origin
+                    "https://m.stripe.network", // Allow scripts from Stripe
+                    // If you need to allow inline scripts, add the correct hash
+                    "'sha256-5+YTmTcBwCYdJ8Jetbr6kyjGp0Ry/H7ptpoun6CrSwQ='", // Example hash for inline script
+                    // OR use 'unsafe-inline' (not recommended)
+                ],
+                "object-src": ["'none'"], // Disallow object elements
+                "upgrade-insecure-requests": [], // Ensures all HTTP requests are upgraded to HTTPS
+            },
+            reportOnly: true, // To ensure it only reports the violations without blocking resources in production
+        },
+    }),
+);
 
 // middleware
 app.use(express.json());

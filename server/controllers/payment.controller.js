@@ -101,13 +101,388 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 //   }
 // };
 
+// const createCheckoutSession = async (req, res) => {
+//   const { products, totalAmount, gst, shippingCharge, deliveryCharge, user } = req.body;
+
+//   console.log('Request Body:', req.body);
+//   const delivery = deliveryCharge > 0 ? deliveryCharge : 'Free';
+
+//   // Prepare line items for Stripe session from products
+//   const lineItems = products.map((item) => ({
+//     price_data: {
+//       currency: 'inr',
+//       product_data: {
+//         images: [item.image],
+//         name: item.name,
+//       },
+//       unit_amount: item.price * 100, // Stripe expects price in paise for INR
+//     },
+//     quantity: item.quantity,
+//   }));
+
+//   // Add delivery charge, GST, and other charges as line items
+//   if (deliveryCharge > 0) {
+//     lineItems.push({
+//       price_data: {
+//         currency: 'inr',
+//         product_data: {
+//           name: 'Delivery Charge',
+//         },
+//         unit_amount: deliveryCharge * 100, // Convert to paise
+//       },
+//       quantity: 1,
+//     });
+//   }
+  
+//   if (shippingCharge > 0) {
+//     lineItems.push({
+//       price_data: {
+//         currency: 'inr',
+//         product_data: {
+//           name: 'Shipping Charge',
+//         },
+//         unit_amount: shippingCharge * 100, // Convert to paise
+//       },
+//       quantity: 1,
+//     });
+//   }
+  
+//   if (gst > 0) {
+//     lineItems.push({
+//       price_data: {
+//         currency: 'inr',
+//         product_data: {
+//           name: 'GST',
+//         },
+//         unit_amount: gst * 100, // Convert to paise
+//       },
+//       quantity: 1,
+//     });
+//   }
+
+//   // Create Stripe Checkout Session
+//   try {
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ['card'],
+//       mode: 'payment',
+//       line_items: lineItems,
+//       success_url: 'http://localhost:5173/payment-successful',
+//       cancel_url: 'http://localhost:5173/payment-cancel',
+//       metadata: {
+//         total_amount: totalAmount, // Store total amount in metadata if needed
+//       },
+//     });
+
+//     console.log('Stripe Session Created:', session);
+
+//     // Create new order in the database after session is created
+//     const newOrder = new Order({
+//       orderId: session.id,
+//       customerName: user.id, // Use `id` from `user`
+//       customerEmail: user.email,
+//       phoneNumber: user.phoneNumber,
+//       products: products.map(item => ({
+//         productId: item.id, // Use `id` from `products`
+//         name: item.name,
+//         quantity: item.quantity,
+//         price: item.price,
+//         prodImage: item.image,
+//       })),
+//       total: totalAmount / 100, // Convert back from paise to INR for total amount
+//       gst: gst,
+//       shippingCharge: shippingCharge,
+//       location: `${user.address || ''}, ${user.pincode || ''}, ${user.state || ''}`.trim() || 'Default Location',
+//       delivery: delivery,
+//       stripePaymentIntentId: session.id,
+//       paymentStatus: 'Pending',
+//     });
+
+//     console.log('New Order Details:', newOrder); // Log the new order details
+
+//     await newOrder.save(); // Save the order
+//     res.json({
+//       sessionId: session.id,
+//       message: 'Order created and checkout session initiated',
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.log('Error creating checkout session:', error);
+//     res.status(500).json({
+//       message: 'Failed to create checkout session',
+//       success: false,
+//     });
+//   }
+// };
+
+
+
+// const createCheckoutSession = async (req, res) => {
+//   const { products, totalAmount, gst, shippingCharge, deliveryCharge, user } = req.body;
+
+//   console.log('Request Body:', req.body);
+//   const delivery = deliveryCharge > 0 ? deliveryCharge : 'Free';
+
+//   // Prepare line items for Stripe session from products
+//   const lineItems = products.map((item) => ({
+//     price_data: {
+//       currency: 'inr',
+//       product_data: {
+//         images: [item.image],
+//         name: item.name,
+//       },
+//       unit_amount: item.price * 100, // Stripe expects price in paise for INR
+//     },
+//     quantity: item.quantity,
+//   }));
+
+//   // Add delivery charge, GST, and other charges as line items
+//   if (deliveryCharge > 0) {
+//     lineItems.push({
+//       price_data: {
+//         currency: 'inr',
+//         product_data: {
+//           name: 'Delivery Charge',
+//         },
+//         unit_amount: deliveryCharge * 100, // Convert to paise
+//       },
+//       quantity: 1,
+//     });
+//   }
+  
+//   if (shippingCharge > 0) {
+//     lineItems.push({
+//       price_data: {
+//         currency: 'inr',
+//         product_data: {
+//           name: 'Shipping Charge',
+//         },
+//         unit_amount: shippingCharge * 100, // Convert to paise
+//       },
+//       quantity: 1,
+//     });
+//   }
+  
+//   if (gst > 0) {
+//     lineItems.push({
+//       price_data: {
+//         currency: 'inr',
+//         product_data: {
+//           name: 'GST',
+//         },
+//         unit_amount: gst * 100, // Convert to paise
+//       },
+//       quantity: 1,
+//     });
+//   }
+
+//   // Create Stripe Checkout Session
+//   try {
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ['card'],
+//       mode: 'payment',
+//       line_items: lineItems,
+//       success_url: 'http://localhost:5173/payment-successful',
+//       cancel_url: 'http://localhost:5173/payment-cancel',
+//       metadata: {
+//         total_amount: totalAmount, // Store total amount in metadata if needed
+//       },
+//     });
+
+//     console.log('Stripe Session Created:', session);
+
+//     // Create new order in the database after session is created
+//     const newOrder = new Order({
+//       orderId: session.id,
+//       customerName: user.id, // Use `id` from `user`
+//       customerEmail: user.email,
+//       phoneNumber: user.phoneNumber,
+//       products: products.map(item => ({
+//         productId: item.id, // Use `id` from `products`
+//         name: item.name,
+//         quantity: item.quantity,
+//         price: item.price,
+//         prodImage: item.image,
+//       })),
+//       total: totalAmount / 100, // Convert back from paise to INR for total amount
+//       gst: gst,
+//       shippingCharge: shippingCharge,
+//       location: `${user.address || ''}, ${user.pincode || ''}, ${user.state || ''}`.trim() || 'Default Location',
+//       delivery: delivery,
+//       stripePaymentIntentId: session.id,
+//       paymentStatus: 'Pending',
+//     });
+
+//     console.log('New Order Details:', newOrder); // Log the new order details
+
+//     await newOrder.save(); // Save the order
+//     res.json({
+//       sessionId: session.id,
+//       message: 'Order created and checkout session initiated',
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.log('Error creating checkout session:', error);
+//     res.status(500).json({
+//       message: 'Failed to create checkout session',
+//       success: false,
+//     });
+//   }
+// };
+
+
+
+// const createCheckoutSession = async (req, res) => {
+//   const { products, totalAmount, gst, shippingCharge, deliveryCharge } = req.body;
+
+//   const lineItems = products.map((item) => ({
+//     price_data: {
+//       currency: 'inr',
+//       product_data: {
+//         images: [item.image],
+//         name: item.name,
+//       },
+//       unit_amount: item.price * 100,
+//     },
+//     quantity: item.quantity,
+//   }));
+
+//   // Add additional charges
+//   if (deliveryCharge > 0) {
+//     lineItems.push({
+//       price_data: {
+//         currency: 'inr',
+//         product_data: {
+//           name: 'Delivery Charge',
+//         },
+//         unit_amount: deliveryCharge * 100,
+//       },
+//       quantity: 1,
+//     });
+//   }
+  
+//   if (shippingCharge > 0) {
+//     lineItems.push({
+//       price_data: {
+//         currency: 'inr',
+//         product_data: {
+//           name: 'Shipping Charge',
+//         },
+//         unit_amount: shippingCharge * 100,
+//       },
+//       quantity: 1,
+//     });
+//   }
+  
+//   if (gst > 0) {
+//     lineItems.push({
+//       price_data: {
+//         currency: 'inr',
+//         product_data: {
+//           name: 'GST',
+//         },
+//         unit_amount: gst * 100,
+//       },
+//       quantity: 1,
+//     });
+//   }
+
+//   try {
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ['card'],
+//       mode: 'payment',
+//       line_items: lineItems,
+//       success_url: 'http://localhost:5173/payment-successful',
+//       cancel_url: 'http://localhost:5173/payment-cancel',
+//       metadata: {
+//         total_amount: totalAmount, // Store total amount in metadata if needed
+//       },
+//     });
+
+//     res.json({
+//       sessionId: session.id,
+//       message: 'Checkout session created',
+//       success: true,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: 'Failed to create checkout session',
+//       success: false,
+//     });
+//   }
+// };
+
+
+
+// // Webhook endpoint
+// const stripeWebhook = async (req, res) => {
+//   console.log(req.headers);
+//   const sig = req.headers['stripe-signature'];
+//   let event;
+
+//   if (!sig) {
+//     console.log("No stripe-signature header found");
+//     return res.status(400).send("Missing stripe-signature header");
+//   }
+
+//   try {
+//     event = Stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+//   } catch (err) {
+//     console.log(`⚠️  Webhook signature verification failed: ${err.message}`);
+//     return res.sendStatus(400);
+//   }
+
+//   if (event.type === 'checkout.session.completed') {
+//     const session = event.data.object;
+
+//     try {
+//       const user = JSON.parse(session.metadata.user);
+//       const products = JSON.parse(session.metadata.products);
+//       const { totalAmount, gst, shippingCharge, deliveryCharge } = session.metadata;
+
+//       console.log('Parsed user:', user);
+//       console.log('Parsed products:', products);
+
+//       const newOrder = new Order({
+//         orderId: session.id,
+//         customerName: user.id,
+//         customerEmail: user.email,
+//         phoneNumber: user.phoneNumber,
+//         products: products.map(item => ({
+//           productId: item.id,
+//           name: item.name,
+//           quantity: item.quantity,
+//           price: item.price,
+//           prodImage: item.image,
+//         })),
+//         total: totalAmount / 100,
+//         gst: gst,
+//         shippingCharge: shippingCharge,
+//         location: `${user.address || ''}, ${user.pincode || ''}, ${user.state || ''}`.trim() || 'Default Location',
+//         delivery: deliveryCharge > 0 ? deliveryCharge : 'Free',
+//         stripePaymentIntentId: session.id,
+//         paymentStatus: 'Paid',
+//       });
+
+//       await newOrder.save();
+//       console.log('New order created:', newOrder);
+//       res.status(200).send({ success: true });
+//     } catch (error) {
+//       console.log('Error creating checkout session:', error);
+//       res.status(500).json({
+//         message: 'Failed to create checkout session',
+//         success: false,
+//       });
+//     }
+//   } else {
+//     res.status(200).send('Event type not handled');
+//   }
+// };
+
+
+
 const createCheckoutSession = async (req, res) => {
   const { products, totalAmount, gst, shippingCharge, deliveryCharge, user } = req.body;
 
-  console.log('Request Body:', req.body);
-  const delivery = deliveryCharge > 0 ? deliveryCharge : 'Free';
-
-  // Prepare line items for Stripe session from products
   const lineItems = products.map((item) => ({
     price_data: {
       currency: 'inr',
@@ -120,47 +495,39 @@ const createCheckoutSession = async (req, res) => {
     quantity: item.quantity,
   }));
 
-  // Add delivery charge, GST, and other charges as line items
   if (deliveryCharge > 0) {
     lineItems.push({
       price_data: {
         currency: 'inr',
-        product_data: {
-          name: 'Delivery Charge',
-        },
-        unit_amount: deliveryCharge * 100, // Convert to paise
-      },
-      quantity: 1,
-    });
-  }
-  
-  if (shippingCharge > 0) {
-    lineItems.push({
-      price_data: {
-        currency: 'inr',
-        product_data: {
-          name: 'Shipping Charge',
-        },
-        unit_amount: shippingCharge * 100, // Convert to paise
-      },
-      quantity: 1,
-    });
-  }
-  
-  if (gst > 0) {
-    lineItems.push({
-      price_data: {
-        currency: 'inr',
-        product_data: {
-          name: 'GST',
-        },
-        unit_amount: gst * 100, // Convert to paise
+        product_data: { name: 'Delivery Charge' },
+        unit_amount: deliveryCharge * 100,
       },
       quantity: 1,
     });
   }
 
-  // Create Stripe Checkout Session
+  if (shippingCharge > 0) {
+    lineItems.push({
+      price_data: {
+        currency: 'inr',
+        product_data: { name: 'Shipping Charge' },
+        unit_amount: shippingCharge * 100,
+      },
+      quantity: 1,
+    });
+  }
+
+  if (gst > 0) {
+    lineItems.push({
+      price_data: {
+        currency: 'inr',
+        product_data: { name: 'GST' },
+        unit_amount: gst * 100,
+      },
+      quantity: 1,
+    });
+  }
+
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -169,40 +536,18 @@ const createCheckoutSession = async (req, res) => {
       success_url: 'http://localhost:5173/payment-successful',
       cancel_url: 'http://localhost:5173/payment-cancel',
       metadata: {
-        total_amount: totalAmount, // Store total amount in metadata if needed
+        total_amount: totalAmount,
+        user: JSON.stringify(user),
+        products: JSON.stringify(products),
+        gst,
+        shippingCharge,
+        deliveryCharge,
       },
     });
 
-    console.log('Stripe Session Created:', session);
-
-    // Create new order in the database after session is created
-    const newOrder = new Order({
-      orderId: session.id,
-      customerName: user.id, // Use `id` from `user`
-      customerEmail: user.email,
-      phoneNumber: user.phoneNumber,
-      products: products.map(item => ({
-        productId: item.id, // Use `id` from `products`
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        prodImage: item.image,
-      })),
-      total: totalAmount / 100, // Convert back from paise to INR for total amount
-      gst: gst,
-      shippingCharge: shippingCharge,
-      location: `${user.address || ''}, ${user.pincode || ''}, ${user.state || ''}`.trim() || 'Default Location',
-      delivery: delivery,
-      stripePaymentIntentId: session.id,
-      paymentStatus: 'Pending',
-    });
-
-    console.log('New Order Details:', newOrder); // Log the new order details
-
-    await newOrder.save(); // Save the order
     res.json({
       sessionId: session.id,
-      message: 'Order created and checkout session initiated',
+      message: 'Checkout session initiated',
       success: true,
     });
   } catch (error) {
@@ -212,6 +557,85 @@ const createCheckoutSession = async (req, res) => {
       success: false,
     });
   }
+};
+
+
+
+const stripeWebhook = async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+
+  if (!sig) {
+    console.log("No stripe-signature header found");
+    return res.status(400).send("Missing stripe-signature header");
+  }
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.log(`⚠️  Webhook signature verification failed: ${err.message}`);
+    return res.sendStatus(400);
+  }
+
+  console.log('Received event:', event.type); // Log the event type
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+
+    if (session.payment_status === 'paid') {
+      try {
+        // const user = session.metadata ? JSON.parse(session.metadata.user) : {};
+        const user = session.metadata && session.metadata.user ? JSON.parse(session.metadata.user) : null;
+        const products = session.metadata ? JSON.parse(session.metadata.products) : [];
+        const { total_amount, gst, shippingCharge, deliveryCharge } = session.metadata || {};
+    
+        console.log('Parsed user:', user); // Log user data
+        console.log('Parsed products:', products); // Log product data
+        console.log('Session metadata:', session.metadata); // Log metadata
+    
+        const delivery = deliveryCharge > 0 ? deliveryCharge : 'Free';
+    
+        // Create the order only if the payment is successful
+        const newOrder = new Order({
+          orderId: session.id,
+          customerName: user.id,
+          customerEmail: user.email,
+          phoneNumber: user.phoneNumber,
+          products: products.map(item => ({
+            productId: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            prodImage: item.image,
+          })),
+          total: total_amount / 100, // Convert back from paise to INR for total amount
+          gst: parseFloat(gst), // Parse gst to float
+          shippingCharge: parseFloat(shippingCharge), // Parse shippingCharge to float
+          location: `${user.address || ''}, ${user.pincode || ''}, ${user.state || ''}`.trim() || 'Default Location',
+          delivery: delivery,
+          stripePaymentIntentId: session.payment_intent,
+          paymentStatus: 'Paid',
+        });
+    
+        console.log('New order details:', newOrder);
+        await newOrder.save(); // Save the order
+        console.log('New order created:', newOrder);
+        res.status(201).json({ message: 'Order created successfully', order: newOrder });
+      } catch (error) {
+        console.error('Error creating order:', error); // Log any error
+        res.status(500).json({
+          message: 'Failed to create order',
+          success: false,
+        });
+      }
+    } else {
+      console.log('Payment not completed successfully');
+      res.status(400).json({ message: 'Payment not completed successfully' });
+    }
+    } else {
+      console.log('Payment not completed successfully');
+      res.status(400).json({ message: 'Payment not completed successfully' });
+    }
 };
 
 
@@ -256,7 +680,7 @@ const getUserOrders = async(req, res) => {
 
     if(!orders || orders.length == 0){
       return res.status(404).json({
-        message: 'No orders found for this user.',
+        message: 'No orders found.',
         success: false,
       });
     }
@@ -368,4 +792,4 @@ const totalRevenue = async (req, res) => {
 
 
 
-export { createCheckoutSession, getAllOrders, getUserOrders, updateOrderStatus, requestCancelOrder, totalOrder, totalRevenue };
+export { createCheckoutSession, getAllOrders, getUserOrders, updateOrderStatus, requestCancelOrder, totalOrder, totalRevenue,stripeWebhook };
