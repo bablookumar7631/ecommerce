@@ -135,6 +135,7 @@ import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {addToCart} from '../redux/cartSlice';
 import { setProductDetails } from '../redux/productSlice';
+import { showNotification } from "../redux/notificationSlice";
 
 const ProductItems = () => {
 
@@ -209,7 +210,9 @@ const ProductItems = () => {
                     price: item.discounted_price,
                     quantity: 1,
                     image: item.prodImage
-                  }));
+                    }),
+                    dispatch(showNotification('Item has been added to your shopping cart.'))
+                  );
                 }} className="bg-green-500 py-2 w-full rounded text-white font-semibold">
                   Add to Cart
                 </button>
