@@ -21,6 +21,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import { showNotification } from "../redux/notificationSlice";
 
 const settings = [
   {
@@ -80,6 +81,15 @@ const Navbar = () => {
     }
   };
 
+  const handleCartClick = (e) => {
+    if(totalQuantity === 0){
+      e.preventDefault();
+      dispatch(showNotification('Your cart is empty!'));
+    }else{
+      navigate("/cart");
+    }
+  }
+
   return (
     <div>
       <nav className="bg-gray-200 p-2 px-10 sticky top-0 left-0 shadow-md z-50">
@@ -115,16 +125,15 @@ const Navbar = () => {
             <li>
               <Link to={"/product"}>Product</Link>
             </li>
-            <Link to={'/cart'}>
-                  <Badge 
-                    badgeContent={totalQuantity || 0} 
-                    color="primary" 
-                    showZero 
-                    sx={{ paddingLeft: '14px', cursor: 'pointer' }}
-                  >
-                    <ShoppingCartIcon sx={{ fontSize: 26 }} color="action" />
-                  </Badge>
-                </Link>
+            <Badge 
+              badgeContent={totalQuantity || 0} 
+              color="primary" 
+              showZero 
+              sx={{ paddingLeft: '14px', cursor: 'pointer' }}
+              onClick={handleCartClick}
+            >
+              <ShoppingCartIcon sx={{ fontSize: 26 }} color="action" />
+            </Badge>
             {!user ? (
               <>
                 <li>

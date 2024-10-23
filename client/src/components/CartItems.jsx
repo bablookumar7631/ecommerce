@@ -171,11 +171,12 @@ const CartItems = () => {
             </div>
           ))
         ) : (
-            <p className='border border-gray-500 rounded-md py-10 text-2xl justify-center text-center text-gray-400'>Your cart is empty.</p>
+          <p className='border border-gray-500 rounded-md py-12 text-2xl justify-center text-center text-gray-400'>Your cart is empty.</p>
         )}
       </div>
 
-      <div className='h-60 md:w-2/5 bg-[#F0F8FF] rounded-md p-5 md:mt-0 mt-8'>
+      {cartItems.length > 0 ? (
+        <div className='h-60 md:w-2/5 bg-[#F0F8FF] rounded-md p-5 md:mt-0 mt-8'>
         <div className='flex justify-between'>
             <p>Total Price: </p>
             <p>₹{totalPrice.toFixed(2)}</p>
@@ -203,6 +204,13 @@ const CartItems = () => {
 
         <button className='w-full bg-green-500 py-2 mt-6 rounded-md text-white text-lg font-semibold hover:bg-green-400' onClick={makePayment}>Make Payment</button>
       </div>
+      ) : (
+        <div className='md:w-2/5 rounded-md p-5 md:mt-0 mt-8 mb-8'>
+          <div className="flex justify-center items-center h-full">
+            <img className="w-8/12 opacity-85" src="./images/emptyCart.png" alt="emptyCart png" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
