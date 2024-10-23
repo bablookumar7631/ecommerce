@@ -53,6 +53,7 @@ import { addToCart, removeFromCart } from '../redux/cartSlice';
 import {loadStripe} from '@stripe/stripe-js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { showNotification } from '../redux/notificationSlice';
 
 const CartItems = () => {
   const cartItems = useSelector((state) => state.cart.cart);
@@ -77,6 +78,18 @@ const CartItems = () => {
 
   // payment integratiopn
   const makePayment = async () => {
+    if(!user){
+      navigate('/sign-in');
+      return;
+    }
+
+    if(!user.address || user.address === '' || !user.pincode || user.pincode === '' || !user.state || user.state === ''){
+      navigate('/user-profile');
+      dispatch(showNotification('Add your delivery address'));
+      return;
+    }
+
+
     try {
       const stripe = await loadStripe('pk_test_51Q6p3wHWr6tD3md2CLrV5zWSpTSVxIEVh678I1BnrrLwscdLObkNjYxteHoZFOUArvDFX035tOgPNA1pIfetKicH00H2H69KEi');
 
