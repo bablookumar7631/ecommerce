@@ -1,7 +1,41 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { showNotification } from "../redux/notificationSlice";
 
 const Footer = () => {
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    message: '',
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post('http://localhost:8000/api/v1/contactUser/contact-us', formData);
+
+      if (res.data.success) {
+        dispatch(showNotification(res.data.message));
+        setFormData({ fullName: '', email: '', message: '' }); // Reset form after submission
+      } else {
+        dispatch(showNotification(res.data.message || "An error occurred while sending the message."));
+      }
+    } catch (error) {
+      dispatch(showNotification(error.response?.data?.message || "Failed to send the message. Please try again later."));
+    }
+  }
+
   return (
     <div>
       <footer className="bg-blue-100">
@@ -32,10 +66,10 @@ const Footer = () => {
               </li>
 
               <li>
-                <Link to={"sign-in"}>SignIn</Link>
+                <Link to={"/sign-in"}>SignIn</Link>
               </li>
               <li>
-                <Link to={"sign-up"}>SignUp</Link>
+                <Link to={"/sign-up"}>SignUp</Link>
               </li>
             </ul>
           </div>
@@ -63,12 +97,14 @@ const Footer = () => {
 
           <div>
             <h1 className="font-semibold text-2xl mb-3">Contact us</h1>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <input
                 required
-                name="fullname"
+                name="fullName"
                 className="bg-white w-full rounded p-2"
                 placeholder="Your name"
+                value={formData.fullName}
+                onChange={handleChange}
               />
 
               <input
@@ -77,6 +113,8 @@ const Footer = () => {
                 name="email"
                 className="bg-white w-full rounded p-2"
                 placeholder="Enter email id"
+                value={formData.email}
+                onChange={handleChange}
               />
 
               <textarea
@@ -85,9 +123,11 @@ const Footer = () => {
                 className="bg-white w-full rounded p-2"
                 placeholder="Message"
                 rows={3}
+                value={formData.message}
+                onChange={handleChange}
               />
 
-              <button className="bg-blue-950 text-white py-2 px-6 rounded">
+              <button type='submit' className="bg-blue-950 text-white py-2 px-6 rounded">
                 Submit
               </button>
             </form>
@@ -95,7 +135,8 @@ const Footer = () => {
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
-export default Footer
+export default Footer;
+
