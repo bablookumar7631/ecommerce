@@ -24,7 +24,7 @@ const SearchResults = () => {
 
             try {
                 setLoading(true);
-                const response = await axios.get(`http://localhost:8000/api/v1/products/search?query=${query}`);
+                const response = await axios.get(`https://ecommerce-backend-bv1o.onrender.com/api/v1/products/search?query=${query}`);
                 if (response.data.success) {
                     dispatch(setProductDetails(response.data.products));
                 } else {

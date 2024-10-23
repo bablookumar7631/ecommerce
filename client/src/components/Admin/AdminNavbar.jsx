@@ -14,7 +14,7 @@ const AdminNavbar = () => {
   // Function to handle the logout process
   const logoutHandler = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/v1/users/logout", {
+      const res = await axios.get("https://ecommerce-backend-bv1o.onrender.com/api/v1/users/logout", {
         withCredentials: true,
       });
 

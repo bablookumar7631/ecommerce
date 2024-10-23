@@ -103,7 +103,7 @@ const CartItems = () => {
         deliveryCharge: deliveryCharge
       };
 
-      const res = await axios.post('http://localhost:8000/api/v1/payments/create-checkout-session', body, {
+      const res = await axios.post('https://ecommerce-backend-bv1o.onrender.com/api/v1/payments/create-checkout-session', body, {
         headers: {
           'Content-Type': 'application/json',
         },

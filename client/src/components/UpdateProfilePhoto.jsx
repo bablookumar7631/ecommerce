@@ -35,7 +35,7 @@ const UpdateProfilePhoto = () => {
       setSuccess("");
 
       const res = await axios.post(
-        "http://localhost:8000/api/v1/users/updateProfileImg",
+        "https://ecommerce-backend-bv1o.onrender.com/api/v1/users/updateProfileImg",
         formData,
         {
           headers: {

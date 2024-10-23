@@ -16,7 +16,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/v1/users/total-customers', {
+    axios.get('https://ecommerce-backend-bv1o.onrender.com/api/v1/users/total-customers', {
       headers: {
         'Content-Type': 'application/json'
         },
@@ -24,7 +24,7 @@ const Dashboard = () => {
     })
     .then(res => setTotalCustomers(res.data.totalCustomers));
 
-    axios.get('http://localhost:8000/api/v1/payments/total-orders', {
+    axios.get('https://ecommerce-backend-bv1o.onrender.com/api/v1/payments/total-orders', {
       headers: {
         'Content-Type': 'application/json'
         },
@@ -32,7 +32,7 @@ const Dashboard = () => {
     })
     .then(res => setTotalOrders(res.data.totalOrders));
 
-    axios.get('http://localhost:8000/api/v1/products/total-products', {
+    axios.get('https://ecommerce-backend-bv1o.onrender.com/api/v1/products/total-products', {
       headers: {
         'Content-Type': 'application/json'
         },
@@ -40,7 +40,7 @@ const Dashboard = () => {
     })
     .then(res => setTotalProducts(res.data.totalProducts));
 
-    axios.get('http://localhost:8000/api/v1/payments/total-revenue', {
+    axios.get('https://ecommerce-backend-bv1o.onrender.com/api/v1/payments/total-revenue', {
       headers: {
         'Content-Type': 'application/json'
         },

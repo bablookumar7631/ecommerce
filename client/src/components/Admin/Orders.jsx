@@ -204,7 +204,7 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/v1/payments/get-all-orders', {
+        const response = await axios.get('https://ecommerce-backend-bv1o.onrender.com/api/v1/payments/get-all-orders', {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
@@ -221,7 +221,7 @@ const Orders = () => {
   const handleStatusChange = async (event, orderId) => {
     const newStatus = event.target.value;
     try {
-      const response = await axios.patch('http://localhost:8000/api/v1/payments/update-status', {
+      const response = await axios.patch('https://ecommerce-backend-bv1o.onrender.com/api/v1/payments/update-status', {
         orderId,
         status: newStatus,
       }, {

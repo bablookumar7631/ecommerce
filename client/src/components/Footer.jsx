@@ -23,7 +23,7 @@ const Footer = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post('http://localhost:8000/api/v1/contactUser/contact-us', formData);
+      const res = await axios.post('https://ecommerce-backend-bv1o.onrender.com/api/v1/contactUser/contact-us', formData);
 
       if (res.data.success) {
         dispatch(showNotification(res.data.message));

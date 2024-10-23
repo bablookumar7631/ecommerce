@@ -103,7 +103,7 @@ const Customers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/v1/users/getAllUsers', {
+        const response = await axios.get('https://ecommerce-backend-bv1o.onrender.com/api/v1/users/getAllUsers', {
           headers: {
             'Content-Type': 'application/json'
           },
@@ -133,7 +133,7 @@ const Customers = () => {
   const handleDeleteUser = async (userId) => {
     if (window.confirm("Are you sure you want to delete the user?")) {
       try {
-        const response = await axios.delete(`http://localhost:8000/api/v1/users/deleteUser/${userId}`, {
+        const response = await axios.delete(`https://ecommerce-backend-bv1o.onrender.com/api/v1/users/deleteUser/${userId}`, {
           headers: {
             'Content-Type': 'application/json'
           },

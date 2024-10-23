@@ -1,5 +1,5 @@
 import express from 'express';
-import { createCheckoutSession, getAllOrders, getUserOrders, requestCancelOrder, stripeWebhook, totalOrder, totalRevenue, updateOrderStatus } from '../controllers/payment.controller.js';
+import { createCheckoutSession, getAllOrders, getUserOrders, requestCancelOrder, totalOrder, totalRevenue, updateOrderStatus } from '../controllers/payment.controller.js';
 import { isAuthenticated } from '../middleware/isAuthenticated.js';
 import { adminAuth } from '../middleware/adminAuth.js';
 
@@ -15,6 +15,6 @@ router.get('/total-revenue', isAuthenticated, adminAuth, totalRevenue);
 
 
 // Webhook route for Stripe
-router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+// router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
 
 export default router;

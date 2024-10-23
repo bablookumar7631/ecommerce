@@ -24,7 +24,7 @@ const UpdateCategory = ({ category, onClose, updateCategory }) => {
 
         try {
             const response = await axios.put(
-                `http://localhost:8000/api/v1/categories/categories/updateCategory/${category._id}`,
+                `https://ecommerce-backend-bv1o.onrender.com/api/v1/categories/categories/updateCategory/${category._id}`,
                 formData,
                 {
                     headers: {

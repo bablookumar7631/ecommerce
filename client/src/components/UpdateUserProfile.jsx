@@ -41,7 +41,7 @@ const UpdateUserProfile = () => {
   const handleSubmit = async() => {
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/v1/users/updateProfile", formData, {
+        "https://ecommerce-backend-bv1o.onrender.com/api/v1/users/updateProfile", formData, {
           headers: {
             "Content-Type": "application/json",
           },

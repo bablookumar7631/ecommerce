@@ -23,7 +23,7 @@ const AddProduct = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/v1/categories/getAllCategories"
+          "https://ecommerce-backend-bv1o.onrender.com/api/v1/categories/getAllCategories"
         );
         setCategories(response.data.categories);
       } catch (error) {
@@ -38,7 +38,7 @@ const AddProduct = () => {
       const fetchProductDetails = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/api/v1/products/getproductbyid/${productId}`
+            `https://ecommerce-backend-bv1o.onrender.com/api/v1/products/getproductbyid/${productId}`
           );
           const productData = response.data.product;
           setFormData({
@@ -84,7 +84,7 @@ const AddProduct = () => {
       if (productId) {
         // Update the product
         const response = await axios.put(
-          `http://localhost:8000/api/v1/products/update-product/${productId}`,
+          `https://ecommerce-backend-bv1o.onrender.com/api/v1/products/update-product/${productId}`,
           formDataToSend,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -98,7 +98,7 @@ const AddProduct = () => {
       } else {
         // Add a new product
         const response = await axios.post(
-          "http://localhost:8000/api/v1/products/products",
+          "https://ecommerce-backend-bv1o.onrender.com/api/v1/products/products",
           formDataToSend,
           {
             headers: { "Content-Type": "multipart/form-data" },

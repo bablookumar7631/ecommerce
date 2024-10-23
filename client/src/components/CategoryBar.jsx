@@ -12,7 +12,7 @@ const CategoryBar = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/v1/categories/getAllCategories');
+        const response = await axios.get('https://ecommerce-backend-bv1o.onrender.com/api/v1/categories/getAllCategories');
         // Access the categories array from the response object
         setCategories(response.data.categories || []);
       } catch (error) {

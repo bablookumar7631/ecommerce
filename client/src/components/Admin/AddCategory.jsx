@@ -184,7 +184,7 @@ const AddCategory = () => {
     data.append('categoryImage', formData.categoryImage);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/categories/categories', data, {
+      const response = await axios.post('https://ecommerce-backend-bv1o.onrender.com/api/v1/categories/categories', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

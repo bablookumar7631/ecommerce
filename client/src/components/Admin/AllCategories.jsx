@@ -36,7 +36,7 @@ const AllCategories = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/v1/categories/getAllCategories');
+                const response = await axios.get('https://ecommerce-backend-bv1o.onrender.com/api/v1/categories/getAllCategories');
                 if (response.data && response.data.categories) {
                     setRows(response.data.categories);
                 } else {
@@ -54,7 +54,7 @@ const AllCategories = () => {
     const handleDeleteCategory = async (categoryId) => {
         if (window.confirm("Are you sure you want to delete this category?")) {
             try {
-                const response = await axios.delete(`http://localhost:8000/api/v1/categories/deleteCategory/${categoryId}`, {
+                const response = await axios.delete(`https://ecommerce-backend-bv1o.onrender.com/api/v1/categories/deleteCategory/${categoryId}`, {
                     headers: {
                         'Content-Type': 'application/json'
                     },

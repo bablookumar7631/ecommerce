@@ -23,7 +23,7 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/v1/products/getAllProducts');
+        const response = await axios.get('https://ecommerce-backend-bv1o.onrender.com/api/v1/products/getAllProducts');
         setProducts(response.data.products || []);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -51,7 +51,7 @@ const Products = () => {
   const handleDeleteProduct = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        const response = await axios.delete(`http://localhost:8000/api/v1/products/delete-product/${productId}`, {
+        const response = await axios.delete(`https://ecommerce-backend-bv1o.onrender.com/api/v1/products/delete-product/${productId}`, {
           headers: {
             'Content-Type': 'application/json'
           },

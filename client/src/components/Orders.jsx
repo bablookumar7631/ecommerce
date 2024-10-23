@@ -157,7 +157,7 @@ const Orders = () => {
     const fetchOrders = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:8000/api/v1/payments/my-orders",
+          "https://ecommerce-backend-bv1o.onrender.com/api/v1/payments/my-orders",
           {
             headers: {
               "Content-Type": "application/json",
@@ -180,7 +180,7 @@ const Orders = () => {
     if (!isConfirmed) return;
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/v1/payments/request-cancel-order/${orderId}`,
+        `https://ecommerce-backend-bv1o.onrender.com/api/v1/payments/request-cancel-order/${orderId}`,
         {},
         {
           headers: {
