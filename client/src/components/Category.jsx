@@ -1,57 +1,10 @@
-// import React from "react";
-
-// const Category = () => {
-//   return (
-//     <div className="md:w-10/12 mx-auto my-12">
-//       <div className="flex flex-col justify-center items-center">
-//         <h1 className="text-3xl font-bold text-center mb-8">All Product related to </h1>
-//       </div>
-
-//       <div className="grid md:grid-cols-4 gap-8">
-//         <div
-//           className="bg-white rounded-md overflow-hidden shadow-lg"
-//         >
-//           <img
-//             src="./product/prod1.webp"
-//             alt=""
-//             className="object-fill h-48 w-96"
-//           />
-//           <div className="px-5 pt-2 pb-3">
-//             <h1 className="text-lg font-semibold">babloo</h1>
-//             <p className="text-slate-500">
-//               utility to display an element’s content at its original size
-//               ignoring the container size.
-//             </p>
-//             <div className="space-x-2">
-//               <label className="font-bold text-lg">₹1045</label>
-//               <del>₹7800</del>
-//               <label className="text-gray-600">(48%)</label>
-//             </div>
-//             <div className="flex gap-2">
-//               <button className="text-green-500 border border-green-500 py-2 w-full rounded  font-semibold mt-4">
-//                 details
-//               </button>
-//               <button className="bg-green-500 py-2 w-full rounded text-white font-semibold mt-4">
-//                 add to cart
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-      
-//     </div>
-//   );
-// };
-
-// export default Category;
-
-
-
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
+import { setProductDetails } from '../redux/productSlice';
+import { showNotification } from '../redux/notificationSlice';
 
 const Category = () => {
 
@@ -109,9 +62,11 @@ const Category = () => {
                   <label className="text-gray-600">({item.discount}%)</label>
                 </div>
                 <div className="flex gap-2">
-                  <button className="text-green-500 border border-green-500 py-2 w-full rounded font-semibold mt-4">
-                    details
-                  </button>
+                  <Link to={`/product/${item._id}/${item.name.replace(/\s+/g, '-').toLowerCase()}`} 
+                    onClick={() => dispatch(setProductDetails(item))}
+                    className="text-green-500 border border-green-500 py-2 w-full rounded font-semibold mt-4 text-center">
+                        Details
+                  </Link>
                   <button onClick={() => {
                     dispatch(addToCart({
                       id: item._id,
@@ -119,7 +74,9 @@ const Category = () => {
                       price: item.discounted_price,
                       quantity: 1,
                       image: item.prodImage
-                    }));
+                    }),
+                    dispatch(showNotification('Item has been added to your shopping cart.')),
+                    );
                   }}
                    className="bg-green-500 py-2 w-full rounded text-white font-semibold mt-4">
                     add to cart
